@@ -16,7 +16,6 @@
 		554328501AC081F9004D1681 /* libLeap.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5543284F1AC081F9004D1681 /* libLeap.dylib */; };
 		554328531AC082BF004D1681 /* LeapObjectiveC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 554328521AC082BF004D1681 /* LeapObjectiveC.mm */; };
 		554328571AC08326004D1681 /* libLeap.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5543284F1AC081F9004D1681 /* libLeap.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		554328591AC0840F004D1681 /* MaslLeapController.m in Sources */ = {isa = PBXBuildFile; fileRef = 554328581AC0840F004D1681 /* MaslLeapController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,8 +59,6 @@
 		554328521AC082BF004D1681 /* LeapObjectiveC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LeapObjectiveC.mm; sourceTree = "<group>"; };
 		554328541AC082D6004D1681 /* Leap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Leap.h; sourceTree = "<group>"; };
 		554328551AC082D6004D1681 /* LeapMath.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LeapMath.h; sourceTree = "<group>"; };
-		554328581AC0840F004D1681 /* MaslLeapController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MaslLeapController.m; sourceTree = "<group>"; };
-		5543285A1AC08468004D1681 /* MaslLeapController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MaslLeapController.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,8 +110,6 @@
 				554328321AC080D6004D1681 /* Images.xcassets */,
 				554328341AC080D6004D1681 /* Main.storyboard */,
 				554328281AC080D6004D1681 /* Supporting Files */,
-				554328581AC0840F004D1681 /* MaslLeapController.m */,
-				5543285A1AC08468004D1681 /* MaslLeapController.h */,
 			);
 			path = LeapGestureRecognition;
 			sourceTree = "<group>";
@@ -260,7 +255,6 @@
 				554328531AC082BF004D1681 /* LeapObjectiveC.mm in Sources */,
 				5543282E1AC080D6004D1681 /* main.m in Sources */,
 				5543282C1AC080D6004D1681 /* AppDelegate.m in Sources */,
-				554328591AC0840F004D1681 /* MaslLeapController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
