@@ -1,0 +1,470 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		5543282C1AC080D6004D1681 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5543282B1AC080D6004D1681 /* AppDelegate.m */; };
+		5543282E1AC080D6004D1681 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5543282D1AC080D6004D1681 /* main.m */; };
+		554328311AC080D6004D1681 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 554328301AC080D6004D1681 /* ViewController.m */; };
+		554328331AC080D6004D1681 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 554328321AC080D6004D1681 /* Images.xcassets */; };
+		554328361AC080D6004D1681 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 554328341AC080D6004D1681 /* Main.storyboard */; };
+		554328421AC080D6004D1681 /* LeapGestureRecognitionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 554328411AC080D6004D1681 /* LeapGestureRecognitionTests.m */; };
+		554328501AC081F9004D1681 /* libLeap.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5543284F1AC081F9004D1681 /* libLeap.dylib */; };
+		554328531AC082BF004D1681 /* LeapObjectiveC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 554328521AC082BF004D1681 /* LeapObjectiveC.mm */; };
+		554328571AC08326004D1681 /* libLeap.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5543284F1AC081F9004D1681 /* libLeap.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		554328591AC0840F004D1681 /* MaslLeapController.m in Sources */ = {isa = PBXBuildFile; fileRef = 554328581AC0840F004D1681 /* MaslLeapController.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5543283C1AC080D6004D1681 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5543281D1AC080D6004D1681 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 554328241AC080D6004D1681;
+			remoteInfo = LeapGestureRecognition;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		554328561AC08314004D1681 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				554328571AC08326004D1681 /* libLeap.dylib in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		554328251AC080D6004D1681 /* LeapGestureRecognition.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LeapGestureRecognition.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		554328291AC080D6004D1681 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5543282A1AC080D6004D1681 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		5543282B1AC080D6004D1681 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		5543282D1AC080D6004D1681 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5543282F1AC080D6004D1681 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		554328301AC080D6004D1681 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		554328321AC080D6004D1681 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		554328351AC080D6004D1681 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		5543283B1AC080D6004D1681 /* LeapGestureRecognitionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LeapGestureRecognitionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		554328401AC080D6004D1681 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		554328411AC080D6004D1681 /* LeapGestureRecognitionTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LeapGestureRecognitionTests.m; sourceTree = "<group>"; };
+		5543284F1AC081F9004D1681 /* libLeap.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libLeap.dylib; path = ../../lib/libLeap.dylib; sourceTree = "<group>"; };
+		554328511AC082BF004D1681 /* LeapObjectiveC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LeapObjectiveC.h; sourceTree = "<group>"; };
+		554328521AC082BF004D1681 /* LeapObjectiveC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LeapObjectiveC.mm; sourceTree = "<group>"; };
+		554328541AC082D6004D1681 /* Leap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Leap.h; sourceTree = "<group>"; };
+		554328551AC082D6004D1681 /* LeapMath.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LeapMath.h; sourceTree = "<group>"; };
+		554328581AC0840F004D1681 /* MaslLeapController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MaslLeapController.m; sourceTree = "<group>"; };
+		5543285A1AC08468004D1681 /* MaslLeapController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MaslLeapController.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		554328221AC080D6004D1681 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				554328501AC081F9004D1681 /* libLeap.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		554328381AC080D6004D1681 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5543281C1AC080D6004D1681 = {
+			isa = PBXGroup;
+			children = (
+				5543284F1AC081F9004D1681 /* libLeap.dylib */,
+				554328271AC080D6004D1681 /* LeapGestureRecognition */,
+				5543283E1AC080D6004D1681 /* LeapGestureRecognitionTests */,
+				554328261AC080D6004D1681 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		554328261AC080D6004D1681 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				554328251AC080D6004D1681 /* LeapGestureRecognition.app */,
+				5543283B1AC080D6004D1681 /* LeapGestureRecognitionTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		554328271AC080D6004D1681 /* LeapGestureRecognition */ = {
+			isa = PBXGroup;
+			children = (
+				5543284B1AC0812C004D1681 /* Leap */,
+				5543282A1AC080D6004D1681 /* AppDelegate.h */,
+				5543282B1AC080D6004D1681 /* AppDelegate.m */,
+				5543282F1AC080D6004D1681 /* ViewController.h */,
+				554328301AC080D6004D1681 /* ViewController.m */,
+				554328321AC080D6004D1681 /* Images.xcassets */,
+				554328341AC080D6004D1681 /* Main.storyboard */,
+				554328281AC080D6004D1681 /* Supporting Files */,
+				554328581AC0840F004D1681 /* MaslLeapController.m */,
+				5543285A1AC08468004D1681 /* MaslLeapController.h */,
+			);
+			path = LeapGestureRecognition;
+			sourceTree = "<group>";
+		};
+		554328281AC080D6004D1681 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				554328291AC080D6004D1681 /* Info.plist */,
+				5543282D1AC080D6004D1681 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		5543283E1AC080D6004D1681 /* LeapGestureRecognitionTests */ = {
+			isa = PBXGroup;
+			children = (
+				554328411AC080D6004D1681 /* LeapGestureRecognitionTests.m */,
+				5543283F1AC080D6004D1681 /* Supporting Files */,
+			);
+			path = LeapGestureRecognitionTests;
+			sourceTree = "<group>";
+		};
+		5543283F1AC080D6004D1681 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				554328401AC080D6004D1681 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		5543284B1AC0812C004D1681 /* Leap */ = {
+			isa = PBXGroup;
+			children = (
+				554328541AC082D6004D1681 /* Leap.h */,
+				554328551AC082D6004D1681 /* LeapMath.h */,
+				554328511AC082BF004D1681 /* LeapObjectiveC.h */,
+				554328521AC082BF004D1681 /* LeapObjectiveC.mm */,
+			);
+			name = Leap;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		554328241AC080D6004D1681 /* LeapGestureRecognition */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 554328451AC080D6004D1681 /* Build configuration list for PBXNativeTarget "LeapGestureRecognition" */;
+			buildPhases = (
+				554328211AC080D6004D1681 /* Sources */,
+				554328221AC080D6004D1681 /* Frameworks */,
+				554328231AC080D6004D1681 /* Resources */,
+				554328561AC08314004D1681 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = LeapGestureRecognition;
+			productName = LeapGestureRecognition;
+			productReference = 554328251AC080D6004D1681 /* LeapGestureRecognition.app */;
+			productType = "com.apple.product-type.application";
+		};
+		5543283A1AC080D6004D1681 /* LeapGestureRecognitionTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 554328481AC080D6004D1681 /* Build configuration list for PBXNativeTarget "LeapGestureRecognitionTests" */;
+			buildPhases = (
+				554328371AC080D6004D1681 /* Sources */,
+				554328381AC080D6004D1681 /* Frameworks */,
+				554328391AC080D6004D1681 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5543283D1AC080D6004D1681 /* PBXTargetDependency */,
+			);
+			name = LeapGestureRecognitionTests;
+			productName = LeapGestureRecognitionTests;
+			productReference = 5543283B1AC080D6004D1681 /* LeapGestureRecognitionTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5543281D1AC080D6004D1681 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0620;
+				ORGANIZATIONNAME = "Dave Qorashi";
+				TargetAttributes = {
+					554328241AC080D6004D1681 = {
+						CreatedOnToolsVersion = 6.2;
+					};
+					5543283A1AC080D6004D1681 = {
+						CreatedOnToolsVersion = 6.2;
+						TestTargetID = 554328241AC080D6004D1681;
+					};
+				};
+			};
+			buildConfigurationList = 554328201AC080D6004D1681 /* Build configuration list for PBXProject "LeapGestureRecognition" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 5543281C1AC080D6004D1681;
+			productRefGroup = 554328261AC080D6004D1681 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				554328241AC080D6004D1681 /* LeapGestureRecognition */,
+				5543283A1AC080D6004D1681 /* LeapGestureRecognitionTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		554328231AC080D6004D1681 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				554328331AC080D6004D1681 /* Images.xcassets in Resources */,
+				554328361AC080D6004D1681 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		554328391AC080D6004D1681 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		554328211AC080D6004D1681 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				554328311AC080D6004D1681 /* ViewController.m in Sources */,
+				554328531AC082BF004D1681 /* LeapObjectiveC.mm in Sources */,
+				5543282E1AC080D6004D1681 /* main.m in Sources */,
+				5543282C1AC080D6004D1681 /* AppDelegate.m in Sources */,
+				554328591AC0840F004D1681 /* MaslLeapController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		554328371AC080D6004D1681 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				554328421AC080D6004D1681 /* LeapGestureRecognitionTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5543283D1AC080D6004D1681 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 554328241AC080D6004D1681 /* LeapGestureRecognition */;
+			targetProxy = 5543283C1AC080D6004D1681 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		554328341AC080D6004D1681 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				554328351AC080D6004D1681 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		554328431AC080D6004D1681 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		554328441AC080D6004D1681 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		554328461AC080D6004D1681 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = LeapGestureRecognition/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/Users/dave/Downloads/Leap/LeapSDK/lib,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		554328471AC080D6004D1681 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = LeapGestureRecognition/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/Users/dave/Downloads/Leap/LeapSDK/lib,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		554328491AC080D6004D1681 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = LeapGestureRecognitionTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LeapGestureRecognition.app/Contents/MacOS/LeapGestureRecognition";
+			};
+			name = Debug;
+		};
+		5543284A1AC080D6004D1681 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = LeapGestureRecognitionTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LeapGestureRecognition.app/Contents/MacOS/LeapGestureRecognition";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		554328201AC080D6004D1681 /* Build configuration list for PBXProject "LeapGestureRecognition" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				554328431AC080D6004D1681 /* Debug */,
+				554328441AC080D6004D1681 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		554328451AC080D6004D1681 /* Build configuration list for PBXNativeTarget "LeapGestureRecognition" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				554328461AC080D6004D1681 /* Debug */,
+				554328471AC080D6004D1681 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		554328481AC080D6004D1681 /* Build configuration list for PBXNativeTarget "LeapGestureRecognitionTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				554328491AC080D6004D1681 /* Debug */,
+				5543284A1AC080D6004D1681 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 5543281D1AC080D6004D1681 /* Project object */;
+}
