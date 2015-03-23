@@ -46,10 +46,6 @@
 {
     NSLog(@"Connected");
     LeapController *aController = (LeapController *)[notification object];
-//    [aController enableGesture:LEAP_GESTURE_TYPE_CIRCLE enable:YES];
-//    [aController enableGesture:LEAP_GESTURE_TYPE_KEY_TAP enable:YES];
-//    [aController enableGesture:LEAP_GESTURE_TYPE_SCREEN_TAP enable:YES];
-//    [aController enableGesture:LEAP_GESTURE_TYPE_SWIPE enable:YES];
     [aController setPolicy:LEAP_POLICY_IMAGES];
     [aController.config save];
 }
@@ -70,28 +66,28 @@
 //          [[frame fingers] count], [[frame tools] count], [[frame gestures:nil] count]);
     
     self.testLabel.stringValue = [[NSString alloc] initWithFormat:@"%lld", [frame id]];
+    [self updateImageFromFrame:frame];
     
-    
-    //Update Picture
+}
+
+
+- (void)updateImageFromFrame:(LeapFrame *)frame
+{
     if (frame.images.count > 0) {
         LeapImage *image = [frame.images objectAtIndex:0];
-//        LeapImage *rightImage = [frame.images objectAtIndex:1];
         
         NSBitmapImageRep *imgRep = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL
-                                                                           pixelsWide:image.width
-                                                                           pixelsHigh:image.height
-                                                                        bitsPerSample:8
-                                                                      samplesPerPixel:1
-                                                                             hasAlpha:NO
-                                                                             isPlanar:NO
-                                                                       colorSpaceName:NSCalibratedWhiteColorSpace
-                                                                         bitmapFormat:0
-                                                                          bytesPerRow:image.width
-                                                                         bitsPerPixel:8];
+                                                             pixelsWide:image.width
+                                                             pixelsHigh:image.height
+                                                             bitsPerSample:8
+                                                             samplesPerPixel:1
+                                                             hasAlpha:NO
+                                                             isPlanar:NO
+                                                             colorSpaceName:NSCalibratedWhiteColorSpace
+                                                             bitmapFormat:0
+                                                             bytesPerRow:image.width
+                                                             bitsPerPixel:8];
         
-//        NSData * asNSData = [[NSData alloc] initWithBytesNoCopy:(void *)leftImage.data
-//                                                         length:leftImage.width * leftImage.height
-//                                                        deallocator:^void (void * bytes, NSUInteger length) {}];
         NSImage *nsimage = [[NSImage alloc] initWithSize:NSMakeSize(image.width, image.height)];
         
         unsigned char * bmpData = [imgRep bitmapData];
@@ -101,6 +97,7 @@
         
         [self.lImageView setImage:nsimage];
     }
+    
 }
 
 @end
