@@ -16,6 +16,7 @@
 		554328501AC081F9004D1681 /* libLeap.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5543284F1AC081F9004D1681 /* libLeap.dylib */; };
 		554328531AC082BF004D1681 /* LeapObjectiveC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 554328521AC082BF004D1681 /* LeapObjectiveC.mm */; };
 		554328571AC08326004D1681 /* libLeap.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5543284F1AC081F9004D1681 /* libLeap.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		5543285D1AC0A000004D1681 /* RawImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5543285C1AC0A000004D1681 /* RawImageView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +60,8 @@
 		554328521AC082BF004D1681 /* LeapObjectiveC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LeapObjectiveC.mm; sourceTree = "<group>"; };
 		554328541AC082D6004D1681 /* Leap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Leap.h; sourceTree = "<group>"; };
 		554328551AC082D6004D1681 /* LeapMath.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LeapMath.h; sourceTree = "<group>"; };
+		5543285B1AC09FE7004D1681 /* RawImageView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RawImageView.h; sourceTree = "<group>"; };
+		5543285C1AC0A000004D1681 /* RawImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RawImageView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +105,8 @@
 		554328271AC080D6004D1681 /* LeapGestureRecognition */ = {
 			isa = PBXGroup;
 			children = (
+				5543285B1AC09FE7004D1681 /* RawImageView.h */,
+				5543285C1AC0A000004D1681 /* RawImageView.m */,
 				5543284B1AC0812C004D1681 /* Leap */,
 				5543282A1AC080D6004D1681 /* AppDelegate.h */,
 				5543282B1AC080D6004D1681 /* AppDelegate.m */,
@@ -251,6 +256,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5543285D1AC0A000004D1681 /* RawImageView.m in Sources */,
 				554328311AC080D6004D1681 /* ViewController.m in Sources */,
 				554328531AC082BF004D1681 /* LeapObjectiveC.mm in Sources */,
 				5543282E1AC080D6004D1681 /* main.m in Sources */,

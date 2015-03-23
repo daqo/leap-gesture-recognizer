@@ -10,6 +10,7 @@
 
 @interface ViewController : NSViewController
 @property (weak) IBOutlet NSTextField *testLabel;
+@property (weak) IBOutlet NSImageView *lImageView;
 
 @end
 

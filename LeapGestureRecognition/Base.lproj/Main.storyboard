@@ -688,9 +688,14 @@
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HZ3-aH-F2z">
+                                <rect key="frame" x="142" y="67" width="375" height="317"/>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" imageFrameStyle="grayBezel" id="lCS-fE-PtO"/>
+                            </imageView>
                         </subviews>
                     </view>
                     <connections>
+                        <outlet property="lImageView" destination="HZ3-aH-F2z" id="me1-BR-pE2"/>
                         <outlet property="testLabel" destination="Ak0-Nq-EB0" id="DbX-Yj-2Vm"/>
                     </connections>
                 </viewController>
