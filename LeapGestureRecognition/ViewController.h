@@ -7,6 +7,8 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import <math.h>
+#import <float.h>
 
 @interface ViewController : NSViewController
 @property (weak) IBOutlet NSTextField *testLabel;
