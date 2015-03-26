@@ -455,6 +455,7 @@
 				554328471AC080D6004D1681 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		554328481AC080D6004D1681 /* Build configuration list for PBXNativeTarget "LeapGestureRecognitionTests" */ = {
 			isa = XCConfigurationList;
@@ -463,6 +464,7 @@
 				5543284A1AC080D6004D1681 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

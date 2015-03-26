@@ -38,78 +38,9 @@
     
     NSString* _trainingGesture;
     NSMutableDictionary* _gestures;
-    int _trainingGestures;
+    int _requiredTrainingGesturesCount;
     
     NSMutableDictionary* _poses;
-}
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    
-    // Do any additional setup after loading the view.
-    
-    controller = [[LeapController alloc] init];
-    [controller addListener:self];
-    
-    _recording = FALSE;
-    _gesture = [NSMutableArray array];
-    _frameCount = 0;
-    
-    _secondsLeftForTrainingToStart = 4;
-    _paused = TRUE;
-    _downtime = 2;
-    _lastHit = 0;
-    
-    _minRecordingVelocity = 300;
-    _maxRecordingVelocity = 30;
-    
-    _renderableGesture = [NSMutableArray array];
-    _recordedPoseFrames = 0;
-    
-    _recordingPose = FALSE;
-    _minGestureFrames = 5;
-    _minPoseFrames = 75;
-    
-    _trainingGesture= Nil;
-    _gestures = [NSMutableDictionary dictionary];
-    _trainingGestures = 1; //DAVE change this in the final implementation
-    
-    _poses = [NSMutableDictionary dictionary];
-}
-
-- (void)setRepresentedObject:(id)representedObject {
-    [super setRepresentedObject:representedObject];
-    
-    // Update the view, if already loaded.
-}
-
-- (IBAction)addGesture:(id)sender {
-    if (![self.gestureName.stringValue isEqual: @""])
-    {
-        _trainingGesture = self.gestureName.stringValue;
-        [_gestures setObject:[NSMutableArray array] forKey:_trainingGesture];
-        //fire('gesture-created', gestureName, skipTraining);
-        NSLog(@"gesture-created");
-        _paused = TRUE;
-        _threeSecondsTimer = [NSTimer scheduledTimerWithTimeInterval:1.0
-                               target:self
-                               selector:@selector(startTrainingTimer)
-                               userInfo:nil
-                               repeats:YES];
-    }
-}
-
-- (void)startTrainingTimer {
-    _secondsLeftForTrainingToStart--;
-    self.trainingAlert.stringValue = [[NSString alloc] initWithFormat:@"Training will start in %d seconds!", _secondsLeftForTrainingToStart];
-    [self.trainingAlert setHidden:FALSE];
-    if ( _secondsLeftForTrainingToStart == 0 ) {
-        [_threeSecondsTimer invalidate];
-        _secondsLeftForTrainingToStart = 4;
-        [self.trainingAlert setHidden:TRUE];
-        [self startTraining:self.gestureName.stringValue];
-    }
-
 }
 
 - (void)onInit:(NSNotification *)notification
@@ -128,8 +59,164 @@
 
 - (void)onDisconnect:(NSNotification *)notification
 {
-    //Note: not dispatched when running in a debugger.
     NSLog(@"Disconnected");
+}
+
+//////
+
+- (void) recordingIsStarted: (NSNotification *)n {
+    
+}
+
+- (void) recordingIsStopped: (NSNotification *)n {
+    
+}
+
+- (void) gestureIsDetected: (NSNotification *)n {
+    self.gestureRecognitionStatus.stringValue = [[NSString alloc] initWithFormat:@"Gesture is Recognized!"];
+    [self.gestureRecognitionStatus setHidden:FALSE];
+}
+
+- (void) gestureIsCreated: (NSNotification *)n {
+    
+}
+
+- (void) trainingIsStarted: (NSNotification *)n {
+    
+}
+
+- (void) trainingIsCompleted: (NSNotification *)n {
+    [self.numberOfTrainingLeftForCurrentGesture setHidden:TRUE];
+    [self.makeANewGestureButton setEnabled:TRUE];
+    
+    NSString* name = n.userInfo[@"gestureName"];
+    if ([name  isEqual: @"left"]) {
+        self.yawLeftGestureStatus.stringValue = [[NSString alloc] initWithFormat:@"Left: Set"];
+    } else if ([name  isEqual: @"right"]) {
+        self.yawRightGestureStatus.stringValue = [[NSString alloc] initWithFormat:@"Right: Set"];
+    } else if ([name  isEqual: @"up"]) {
+        self.upGestureStatus.stringValue = [[NSString alloc] initWithFormat:@"Up: Set"];
+    } else if ([name  isEqual: @"down"]) {
+        self.downGestureStatus.stringValue = [[NSString alloc] initWithFormat:@"Down: Set"];
+    } else if ([name  isEqual: @"forward"]) {
+        self.forwardGestureStatus.stringValue = [[NSString alloc] initWithFormat:@"Forward: Set"];
+    } else if ([name  isEqual: @"back"]) {
+        self.backGestureStatus.stringValue = [[NSString alloc] initWithFormat:@"Back: Set"];
+    }
+    
+    //@{ @"gestureName": gestureName, @"trainingGesture": contents, @"isPose": @(isPose)};
+
+}
+
+- (void) trainingGestureIsSaved: (NSNotification *)n {
+    NSString* name = n.userInfo[@"gestureName"];
+    unsigned long count = _requiredTrainingGesturesCount - [n.userInfo[@"trainingGesture"] count];
+    self.numberOfTrainingLeftForCurrentGesture.stringValue = [[NSString alloc] initWithFormat:@"Perform %@ gesture or pose %ld times", name, count];
+
+    [self.numberOfTrainingLeftForCurrentGesture setHidden:FALSE];
+}
+
+- (void) trainingIsRecognized: (NSNotification *)n {
+    
+}
+
+- (void) trainingIsUnknown: (NSNotification *)n {
+    
+}
+///////
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    // Do any additional setup after loading the view.
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(recordingIsStarted:) name:@"started-recording" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(recordingIsStopped:) name:@"stopped-recording" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(gestureIsDetected:) name:@"gesture-detected" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(gestureIsCreated:) name:@"gesture-created" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(trainingIsStarted:) name:@"training-started" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(trainingIsCompleted:) name:@"training-complete" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(trainingGestureIsSaved:) name:@"training-gesture-saved" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(trainingIsRecognized:) name:@"gesture-recognized" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(trainingIsUnknown:) name:@"gesture-unknown" object:nil];
+    
+    controller = [[LeapController alloc] init];
+    [controller addListener:self];
+    
+    _recording = FALSE;
+    _gesture = [NSMutableArray array];
+    _frameCount = 0;
+    
+    _secondsLeftForTrainingToStart = 4;
+    [self pauseFrameTracking];
+    _downtime = 2;
+    _lastHit = 0;
+    
+    _minRecordingVelocity = 300;
+    _maxRecordingVelocity = 30;
+    
+    _renderableGesture = [NSMutableArray array];
+    _recordedPoseFrames = 0;
+    
+    _recordingPose = FALSE;
+    _minGestureFrames = 5;
+    _minPoseFrames = 75;
+    
+    _trainingGesture= Nil;
+    _gestures = [NSMutableDictionary dictionary];
+    _requiredTrainingGesturesCount = 6; //DAVE change this in the final implementation
+    
+    _poses = [NSMutableDictionary dictionary];
+}
+
+- (void)setRepresentedObject:(id)representedObject {
+    [super setRepresentedObject:representedObject];
+    
+    // Update the view, if already loaded.
+}
+
+- (IBAction)addGesture:(id)sender {
+    NSString* name = self.gestureName.stringValue;
+    if (![name isEqual: @""])
+    {
+        if (!([name isEqual: @"left"] || [name isEqual: @"right"] || [name isEqual: @"up"] || [name isEqual: @"down"] || [name isEqual: @"forward"] || [name isEqual: @"back"])) {
+            //the name is not valid
+            self.gestureName.stringValue = @"";
+            return;
+        }
+        
+        _trainingGesture = self.gestureName.stringValue;
+        [_gestures setObject:[NSMutableArray array] forKey:_trainingGesture];
+        
+        NSDictionary * userInfo = @{ @"trainingGesture" : _trainingGesture };
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"gesture-created" object:self userInfo:userInfo];
+        
+        [self pauseFrameTracking];
+        _threeSecondsTimer = [NSTimer scheduledTimerWithTimeInterval:1.0
+                               target:self
+                               selector:@selector(startTrainingTimer)
+                               userInfo:nil
+                               repeats:YES];
+        [self.makeANewGestureButton setEnabled:FALSE];
+    }
+}
+
+- (void)startTrainingTimer {
+    _secondsLeftForTrainingToStart--;
+    self.trainingAlert.stringValue = [[NSString alloc] initWithFormat:@"Training will start in %d seconds!", _secondsLeftForTrainingToStart];
+    [self.trainingAlert setHidden:FALSE];
+    if ( _secondsLeftForTrainingToStart == 0 ) {
+        ////
+        self.numberOfTrainingLeftForCurrentGesture.stringValue = [[NSString alloc] initWithFormat:@"Perform %@ gesture or pose %d times", _trainingGesture, _requiredTrainingGesturesCount];
+        [self.numberOfTrainingLeftForCurrentGesture setHidden:FALSE];
+        ////
+        [_threeSecondsTimer invalidate];
+        _secondsLeftForTrainingToStart = 4;
+        [self.trainingAlert setHidden:TRUE];
+        [self startTraining:self.gestureName.stringValue];
+        
+    }
+
 }
 
 - (void)onFrame:(NSNotification *)notification
@@ -137,28 +224,24 @@
     LeapController *aController = (LeapController *)[notification object];
     LeapFrame *frame = [aController frame:0];
     
-//    NSLog(@"Frame id: %lld, timestamp: %lld, hands: %ld, fingers: %ld, tools: %ld, gestures: %ld",
-//          [frame id], [frame timestamp], [[frame hands] count],
-//          [[frame fingers] count], [[frame tools] count], [[frame gestures:nil] count]);
-//    
     self.testLabel.stringValue = [[NSString alloc] initWithFormat:@"%lld", [frame id]];
     [self updateImageFromFrame:frame];
-
+    
+    ///// LeapTrainer Code
 
     if (_paused) { return; }
     time_t now = (time_t) [[NSDate date] timeIntervalSince1970];
     if (now - _lastHit < _downtime) { return; }
     
-    if ([self recordableFrame:frame]) {
+    BOOL isRecordable = [self recordableFrame:frame];
+    if (isRecordable) {
         if (!_recording) {
-            
             _recording = TRUE;
             _frameCount = 0;
             _gesture = [NSMutableArray array]; //DAVE what type should _gesture be?
             _renderableGesture = [NSMutableArray array]; //DAVE what type should _renderableGesture be?
             _recordedPoseFrames = 0;
-            //fire('started-recording');
-            NSLog(@"started-recording");
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"started-recording" object:self];
         }
         
         _frameCount++;
@@ -166,12 +249,14 @@
         [self recordRenderableFrame:frame withPreviousFrame:[aController frame:1]];
     } else if (_recording) {
         _recording = FALSE;
-        //fire('stopped-recording');
-        NSLog(@"stopped-recording");
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"stopped-recording" object:self];
         
         if (_recordingPose || _frameCount >= _minGestureFrames) {
-            //fire('gesture-detected', _gesture, _frameCount);
-            NSLog(@"gesture-detected");
+            
+            NSDictionary * userInfo = @{ @"gesture": _gesture, @"frameCount" : @(_frameCount) };
+            
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"gesture-detected" object:self userInfo:userInfo];
+            
             NSString *gestureName = _trainingGesture;
             if (gestureName) {
                 [self saveTrainingGesture:gestureName withGestureInfo:_gesture withIsPosed:_recordingPose];
@@ -238,9 +323,9 @@
 }
 
 - (void)startTraining:(NSString*)gestureName {
-    _paused = FALSE;
-    //fire('training-started', gestureName);
-    NSLog(@"training-started");
+    [self resumeFrameTracking];
+     NSDictionary * userInfo = @{ @"gestureName": gestureName};
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"training-started" object:self userInfo:userInfo];
 }
 
 - (void)recordRenderableFrame:(LeapFrame*)frame withPreviousFrame:(LeapFrame*)prevFrame {
@@ -249,19 +334,26 @@
 
 - (void)saveTrainingGesture:(NSString*)gestureName withGestureInfo:(NSMutableArray*)gesture withIsPosed:(BOOL)isPose {
     NSMutableArray* contents = [_gestures objectForKey:gestureName];
-    [contents addObject:_gesture];
-    if ([contents count] == _trainingGestures) {
+    [contents addObject:gesture];
+    if ([contents count] == _requiredTrainingGesturesCount) {
         [_gestures setObject:contents forKey:gestureName]; //DAVE use distribute method here!!
         [_poses setObject:[NSNumber numberWithBool:isPose] forKey:gestureName];
-        _trainingGesture = Nil;
+        _trainingGesture = nil;
         [self trainAlgorithm:gestureName withTrainingData:contents];
         
+        NSDictionary * userInfo = @{ @"gestureName": gestureName, @"trainingGesture": contents, @"isPose": @(isPose)};
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"training-complete" object:self userInfo:userInfo];
+    } else {
+        NSDictionary * userInfo = @{ @"gestureName": gestureName, @"trainingGesture": contents };
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"training-gesture-saved" object:self userInfo:userInfo];
     }
 }
 
-
 - (void)trainAlgorithm:(NSString*)gestureName withTrainingData:(NSMutableArray*)data {
-    
+    for (int i = 0; i < [data count]; i++) {
+        NSLog(@"dsds");
+//        [_learner train:data[i]];
+    }
 }
 
 - (void)recognize:(NSMutableArray*)gesture withFrameCount:(int)framecCount {
@@ -277,6 +369,16 @@
     [self recordValue:vector.x];
     [self recordValue:vector.y];
     [self recordValue:vector.z];
+}
+
+- (void)resumeFrameTracking {
+    _paused = FALSE;
+    self.isTrackingPaused.stringValue = [[NSString alloc] initWithFormat:@"Tracking: In progress"];
+}
+
+- (void)pauseFrameTracking {
+    _paused = TRUE;
+    self.isTrackingPaused.stringValue = [[NSString alloc] initWithFormat:@"Tracking: Paused"];
 }
     
 /////////

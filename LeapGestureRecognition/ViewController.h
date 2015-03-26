@@ -22,6 +22,13 @@
 @property (weak) IBOutlet NSTextField *forwardGestureStatus;
 @property (weak) IBOutlet NSTextField *backGestureStatus;
 @property (weak) IBOutlet NSTextField *trainingAlert;
+@property (weak) IBOutlet NSButton *makeANewGestureButton;
+
+
+@property (weak) IBOutlet NSTextField *gestureRecognitionStatus;
+
+@property (weak) IBOutlet NSTextField *isTrackingPaused;
+@property (weak) IBOutlet NSTextField *numberOfTrainingLeftForCurrentGesture;
 
 @end
 
