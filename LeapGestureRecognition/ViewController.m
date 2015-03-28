@@ -9,6 +9,7 @@
 #import "ViewController.h"
 #import "LeapObjectiveC.h"
 #import "RawImageView.h"
+#import "GeometricTemplateMatcher.h"
 
 @implementation ViewController
 {
@@ -41,6 +42,9 @@
     int _requiredTrainingGesturesCount;
     
     NSMutableDictionary* _poses;
+    GeometricTemplateMatcher* _learner;
+    
+    float _hitThreshold;
 }
 
 - (void)onInit:(NSNotification *)notification
@@ -116,11 +120,11 @@
     [self.numberOfTrainingLeftForCurrentGesture setHidden:FALSE];
 }
 
-- (void) trainingIsRecognized: (NSNotification *)n {
-    
+- (void) GestureIsRecognized: (NSNotification *)n {
+    NSLog(@"dsds");
 }
 
-- (void) trainingIsUnknown: (NSNotification *)n {
+- (void) GestureIsUnknown: (NSNotification *)n {
     
 }
 ///////
@@ -137,8 +141,8 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(trainingIsStarted:) name:@"training-started" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(trainingIsCompleted:) name:@"training-complete" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(trainingGestureIsSaved:) name:@"training-gesture-saved" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(trainingIsRecognized:) name:@"gesture-recognized" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(trainingIsUnknown:) name:@"gesture-unknown" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(GestureIsRecognized:) name:@"gesture-recognized" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(GestureIsUnknown:) name:@"gesture-unknown" object:nil];
     
     controller = [[LeapController alloc] init];
     [controller addListener:self];
@@ -167,6 +171,9 @@
     _requiredTrainingGesturesCount = 6; //DAVE change this in the final implementation
     
     _poses = [NSMutableDictionary dictionary];
+    _learner = [[GeometricTemplateMatcher alloc] init];
+    
+    _hitThreshold = 0.65;
 }
 
 - (void)setRepresentedObject:(id)representedObject {
@@ -254,7 +261,6 @@
         if (_recordingPose || _frameCount >= _minGestureFrames) {
             
             NSDictionary * userInfo = @{ @"gesture": _gesture, @"frameCount" : @(_frameCount) };
-            
             [[NSNotificationCenter defaultCenter] postNotificationName:@"gesture-detected" object:self userInfo:userInfo];
             
             NSString *gestureName = _trainingGesture;
@@ -329,7 +335,7 @@
 }
 
 - (void)recordRenderableFrame:(LeapFrame*)frame withPreviousFrame:(LeapFrame*)prevFrame {
-    NSLog(@"recordRenderableFrame needs to be implemented.");
+//    NSLog(@"recordRenderableFrame needs to be implemented.");
 }
 
 - (void)saveTrainingGesture:(NSString*)gestureName withGestureInfo:(NSMutableArray*)gesture withIsPosed:(BOOL)isPose {
@@ -350,14 +356,46 @@
 }
 
 - (void)trainAlgorithm:(NSString*)gestureName withTrainingData:(NSMutableArray*)data {
+    /* 
+     data is the set of data gathered during training.
+     for example if we have _requiredTrainingGesturesCount set to 4, data will comprise 4 arrays.
+     each subarray has different points gathered during each motion.
+     in each frame we are recording 6 points (each point ha x y z). so each subarray's length will be a multiplication of 6*3.
+    */
     for (int i = 0; i < [data count]; i++) {
-        NSLog(@"dsds");
-//        [_learner train:data[i]];
+        [_learner process:data[i]];
     }
 }
 
 - (void)recognize:(NSMutableArray*)gesture withFrameCount:(int)framecCount {
+    NSMutableDictionary* gestures = _gestures;
+    float threshold = _hitThreshold;
+    NSMutableDictionary* allHits = [NSMutableDictionary dictionary];
     
+    float hit = 0;
+    float bestHit = 0;
+    BOOL recognized = FALSE;
+    NSString* closestGestureName = nil;
+    BOOL recognizingPose = (framecCount == 1);
+    
+    for(NSString* gestureName in gestures) {
+        if([[_poses objectForKey:gestureName] boolValue] != recognizingPose) {
+            hit = 0.0;
+        } else {
+            hit = [_learner correlate:gestureName withTrainingSet:[gestures objectForKey:gestureName] withCurrentGesture:gesture];
+        }
+        [allHits setValue:[NSNumber numberWithFloat:hit] forKey:gestureName];
+        if (hit >= threshold) { recognized = TRUE; }
+        if (hit > bestHit) { bestHit = hit; closestGestureName = gestureName; }
+    }
+    
+    if (recognized) {
+        NSDictionary * userInfo = @{ @"bestHit" : [NSNumber numberWithFloat:bestHit], @"closestGestureName" : closestGestureName, @"allHits" : allHits };
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"gesture-recognized" object:self userInfo:userInfo];
+    } else {
+        NSDictionary * userInfo = @{ @"allHits" : allHits };
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"gesture-unknown" object:self userInfo:userInfo];
+    }
 }
 
 - (void)recordValue:(float)value {
