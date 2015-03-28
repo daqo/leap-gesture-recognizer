@@ -121,7 +121,8 @@
 }
 
 - (void) GestureIsRecognized: (NSNotification *)n {
-    NSLog(@"dsds");
+    NSString* name = n.userInfo[@"closestGestureName"];
+    NSLog(@"%@", name);
 }
 
 - (void) GestureIsUnknown: (NSNotification *)n {
@@ -168,7 +169,7 @@
     
     _trainingGesture= Nil;
     _gestures = [NSMutableDictionary dictionary];
-    _requiredTrainingGesturesCount = 6; //DAVE change this in the final implementation
+    _requiredTrainingGesturesCount = 10; //DAVE change this in the final implementation
     
     _poses = [NSMutableDictionary dictionary];
     _learner = [[GeometricTemplateMatcher alloc] init];
@@ -362,9 +363,12 @@
      each subarray has different points gathered during each motion.
      in each frame we are recording 6 points (each point ha x y z). so each subarray's length will be a multiplication of 6*3.
     */
+    NSMutableArray* newData = [NSMutableArray array];
     for (int i = 0; i < [data count]; i++) {
-        [_learner process:data[i]];
+        newData[i] = [_learner process:data[i]];
     }
+    [_gestures setObject:newData forKey:gestureName];
+    
 }
 
 - (void)recognize:(NSMutableArray*)gesture withFrameCount:(int)framecCount {

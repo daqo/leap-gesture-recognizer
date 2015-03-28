@@ -237,21 +237,26 @@
 }
 
 - (float)gestureDistance: (NSMutableArray*)gesture1 withTrainingGesture:(NSMutableArray*)gesture2 {
-    NSUInteger len = [gesture1 count];
-    NSMutableArray* matched = [[NSMutableArray alloc] initWithCapacity:len];
+    NSUInteger len1 = [gesture1 count];
+    NSUInteger len2 = [gesture2 count];
+    NSMutableArray* matched = [[NSMutableArray alloc] initWithCapacity:len1];
     
-    
+    for (int i = 0; i < len1; i++ )
+    {
+        [matched addObject:[NSNumber numberWithBool:false]];
+    }
     
     int index = -1;
     int start = 0; int i = 0;
     
     float sum = 0;
-    do {
+    //do {
         index = -1;
         float min = +INFINITY;
-        for (int j = 0; j < len; j++) {
+        for (int j = 0; j < len1; j++) {
             if (![matched[j] boolValue]) {
-                if (gesture1[i] == nil || gesture2[j] == nil) { continue; } //DAVE what's this?
+                //if (gesture1[i] == nil || gesture2[j] == nil) { continue; } //DAVE what's this?
+                if ( j >= len2 ) { break; }
                 
                 struct LeapPoint p1;
                 NSValue* value1 = [gesture1 objectAtIndex:i];
@@ -266,11 +271,12 @@
                 if (d < min) { min = d; index = j;}
             }
         }
-        
-        matched[index] = [NSNumber numberWithBool:TRUE];
-        sum += (1 - ((i - start + len) % len) / len) * min;
-        i = (i + 1) % len;
-    } while (i != start);
+        if (index != -1) {
+            matched[index] = [NSNumber numberWithBool:TRUE];
+        }
+        sum += (1 - ((i - start + len1) % len1) / len1) * min;
+        //i = (i + 1) % len1;
+    //} while (i != start);
     
     return sum;
 }
