@@ -106,6 +106,8 @@
         self.forwardGestureStatus.stringValue = [[NSString alloc] initWithFormat:@"Forward: Set"];
     } else if ([name  isEqual: @"back"]) {
         self.backGestureStatus.stringValue = [[NSString alloc] initWithFormat:@"Back: Set"];
+    } else if ([name  isEqual: @"hover"]) {
+        self.hoverGestureStatus.stringValue = [[NSString alloc] initWithFormat:@"Hover: Set"];
     }
     
     //@{ @"gestureName": gestureName, @"trainingGesture": contents, @"isPose": @(isPose)};
@@ -174,7 +176,7 @@
     _poses = [NSMutableDictionary dictionary];
     _learner = [[GeometricTemplateMatcher alloc] init];
     
-    _hitThreshold = 0.65;
+    _hitThreshold = 0.80;
 }
 
 - (void)setRepresentedObject:(id)representedObject {
@@ -187,7 +189,7 @@
     NSString* name = self.gestureName.stringValue;
     if (![name isEqual: @""])
     {
-        if (!([name isEqual: @"left"] || [name isEqual: @"right"] || [name isEqual: @"up"] || [name isEqual: @"down"] || [name isEqual: @"forward"] || [name isEqual: @"back"])) {
+        if (!([name isEqual: @"left"] || [name isEqual: @"right"] || [name isEqual: @"up"] || [name isEqual: @"down"] || [name isEqual: @"forward"] || [name isEqual: @"back"] || [name isEqual: @"hover"])) {
             //the name is not valid
             self.gestureName.stringValue = @"";
             return;

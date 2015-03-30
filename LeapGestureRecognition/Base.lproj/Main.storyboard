@@ -807,20 +807,15 @@
                         <outlet property="gestureName" destination="pUs-Pm-G8a" id="uQk-tL-lkp"/>
                         <outlet property="gestureRecognitionStatus" destination="ifE-l9-nW6" id="DWx-ax-sF9"/>
                         <outlet property="hoverGestureStatus" destination="0oF-yy-egi" id="Lop-bL-ENL"/>
-                        <outlet property="hoverStatus" destination="0oF-yy-egi" id="Cyn-0A-Iwk"/>
                         <outlet property="isTrackingPaused" destination="5YU-9E-xk6" id="qrE-R6-T7O"/>
                         <outlet property="lImageView" destination="HZ3-aH-F2z" id="me1-BR-pE2"/>
                         <outlet property="makeANewGestureButton" destination="H4E-Ui-B2f" id="h4O-m8-1K0"/>
-                        <outlet property="newGestureName" destination="pUs-Pm-G8a" id="crx-tI-Eu2"/>
                         <outlet property="numberOfTrainingLeftForCurrentGesture" destination="UX7-HA-nIH" id="8Ep-op-09t"/>
                         <outlet property="testLabel" destination="Ak0-Nq-EB0" id="DbX-Yj-2Vm"/>
                         <outlet property="trainingAlert" destination="OzC-ig-RSK" id="0ee-ra-pGk"/>
                         <outlet property="upGestureStatus" destination="Tbx-S3-nU7" id="IPS-ma-G5V"/>
-                        <outlet property="upStatus" destination="Tbx-S3-nU7" id="yJa-r8-Yxa"/>
                         <outlet property="yawLeftGestureStatus" destination="4Dc-E3-byt" id="wCh-Ev-52H"/>
-                        <outlet property="yawLeftStatus" destination="4Dc-E3-byt" id="6SV-x9-TWh"/>
                         <outlet property="yawRightGestureStatus" destination="Tax-Fg-Ia9" id="Ux6-F7-I5u"/>
-                        <outlet property="yawRightStatus" destination="Tax-Fg-Ia9" id="75z-6g-hYU"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
