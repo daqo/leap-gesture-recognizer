@@ -7,9 +7,9 @@
 //
 struct LeapPoint
 {
-    float x;
-    float y;
-    float z;
+    double x;
+    double y;
+    double z;
     int stroke;
 };
 typedef struct LeapPoint LeapPoint;
@@ -17,6 +17,6 @@ typedef struct LeapPoint LeapPoint;
 @interface GeometricTemplateMatcher : NSObject
 
 - (NSMutableArray*)process: (NSMutableArray* )gesture;
-- (float)correlate:(NSString*)gestureName withTrainingSet:(NSMutableArray*)trainingGestures withCurrentGesture:(NSMutableArray*)gesture;
+- (double)correlate:(NSString*)gestureName withTrainingSet:(NSMutableArray*)trainingGestures withCurrentGesture:(NSMutableArray*)gesture;
 
 @end

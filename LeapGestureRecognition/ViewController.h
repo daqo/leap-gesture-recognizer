@@ -12,7 +12,6 @@
 
 @interface ViewController : NSViewController
 @property (weak) IBOutlet NSTextField *testLabel;
-@property (weak) IBOutlet NSImageView *lImageView;
 @property (weak) IBOutlet NSTextField *gestureName;
 @property (weak) IBOutlet NSTextField *yawLeftGestureStatus;
 @property (weak) IBOutlet NSTextField *yawRightGestureStatus;
@@ -23,13 +22,11 @@
 @property (weak) IBOutlet NSTextField *backGestureStatus;
 @property (weak) IBOutlet NSTextField *trainingAlert;
 @property (weak) IBOutlet NSButton *makeANewGestureButton;
-
-
-@property (weak) IBOutlet NSTextField *gestureRecognitionStatus;
-
 @property (weak) IBOutlet NSTextField *isTrackingPaused;
 @property (weak) IBOutlet NSTextField *trainingGestureStatus;
 @property (weak) IBOutlet NSView *frameView;
+@property (weak) IBOutlet NSTextField *gestureType;
+
 
 @end
 

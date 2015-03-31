@@ -10,15 +10,13 @@
 #import "GeometricTemplateMatcher.h"
 
 @implementation GeometricTemplateMatcher {
-    int _pointCount;
-    LeapPoint _origin;
+//    int _pointCount;
 }
 
 - (id) init {
     self = [super init];
     if (self) {
-        _origin.x = 0; _origin.y = 0; _origin.z = 0;
-        _pointCount = 25;
+//        _pointCount = 25;
     }
     return self;
 }
@@ -50,7 +48,8 @@
 }
 
 - (NSMutableArray*)resample: (NSMutableArray* )gesture {
-    int target = _pointCount - 1;
+//    int target = _pointCount - 1;
+    NSUInteger target = [gesture count];
     double interval = [self pathLength:gesture] / target;
     double dist = 0.0;
     NSMutableArray* resampledGesture = [NSMutableArray arrayWithObject:[gesture objectAtIndex:0]];
@@ -143,121 +142,105 @@
 
 - (NSMutableArray*)translateToOrigin:(NSMutableArray*)gesture {
     LeapPoint center = [self centroid:gesture];
+    
     for (int i = 0; i < [gesture count]; i++) {
-        
-        LeapPoint oldPoint;
-        NSValue* value = [gesture objectAtIndex:i];
-        [value getValue:&oldPoint];
-        
-        LeapPoint newPoint;
-        newPoint.x = (oldPoint.x + _origin.x - center.x);
-        newPoint.y = (oldPoint.y + _origin.y - center.y);
-        newPoint.z = (oldPoint.z + _origin.z - center.z);
-        newPoint.stroke = oldPoint.stroke;
-        
-        NSValue *newValue = [NSValue valueWithBytes:&newPoint objCType:@encode(LeapPoint)];
-        [gesture replaceObjectAtIndex:i withObject:newValue];
-        
+        LeapPoint oldPoint = [self getLeapPointFromObject:gesture[i]];
+        LeapPoint newPoint = {  (oldPoint.x - center.x),
+                                (oldPoint.y - center.y),
+                                (oldPoint.z - center.z),
+                                oldPoint.stroke
+                             };
+        [gesture replaceObjectAtIndex:i withObject:[self packStructAsObject:newPoint]];
     }
     return gesture;
 }
 
 - (LeapPoint)centroid:(NSMutableArray*)gesture {
-    float x = 0.0;
-    float y = 0.0;
-    float z = 0.0;
+    LeapPoint center = { 0.0, 0.0, 0.0 };
     
-    for (int i = 0; i < [gesture count]; i++) {
-        LeapPoint p;
-        NSValue* value = [gesture objectAtIndex:i];
-        [value getValue:&p];
-        
-        x += p.x;
-        y += p.y;
-        z += p.z;
-        
+    for (NSValue* pointObject in gesture) {
+        LeapPoint p = [self getLeapPointFromObject:pointObject];
+        center.x += p.x;
+        center.y += p.y;
+        center.z += p.z;
     }
-    
-    LeapPoint new_p;
-    new_p.x = x / [gesture count];
-    new_p.y = y / [gesture count];
-    new_p.z = z / [gesture count];
-    
-    return new_p;
+    center.x /= [gesture count];
+    center.y /= [gesture count];
+    center.z /= [gesture count];
+    return center;
 }
 
-- (float)correlate:(NSString*)gestureName withTrainingSet:(NSMutableArray*)trainingGestures withCurrentGesture:(NSMutableArray*)gesture {
+- (double)correlate:(NSString*)gestureName withTrainingSet:(NSMutableArray*)trainingGestures withCurrentGesture:(NSMutableArray*)gesture {
     gesture = [self process:gesture];
-    float nearest = +INFINITY;
+    double score = +INFINITY;
     BOOL foundMatch = FALSE;
-    float distance;
+    double distance;
     
-    for(int i = 0; i < [trainingGestures count]; i++) {
-        distance = [self match:gesture withTrainingData: [trainingGestures objectAtIndex:i]];
-        if (distance < nearest) {
-            nearest = distance;
+    for(NSMutableArray* dataset in trainingGestures) {
+        distance = [self greedyCloudMatch:gesture withTrainingData: dataset];
+        if (score > distance) {
+            score = distance;
             foundMatch = TRUE;
         }
     }
     
-    float hit;
+    double hit;
     if (!foundMatch) {
         hit = 0.0;
     } else {
-        hit = fabs((nearest - 4.0) / 4); //DAVE make sure it's working correctly
+//        hit = fabs((score - 4.0) / 4);
+        hit = fmax(fabs((4.0 - score) / 4.0), 0.0);
     }
     return hit;
 }
 
-- (float)match: (NSMutableArray*)gesture withTrainingData:(NSMutableArray *)data {
-    float min = +INFINITY;
-    float a = [self gestureDistance:gesture withTrainingGesture:data];
-    float b = [self gestureDistance:data withTrainingGesture:gesture];
-    float m = fminf(a, b);
-    return fminf(min, m);
+- (double)greedyCloudMatch: (NSMutableArray*)gesture withTrainingData:(NSMutableArray *)data {
+    double e = 0.5;
+    int step = floor(pow([gesture count], 1 - e));
+    double min = +INFINITY;
+    NSUInteger gestureCount = [gesture count];
+    for (int i = 0; i < [gesture count]; i+=step ) {
+        double d1 = [self cloudDistance:gesture withTrainingGesture:data withCount:gestureCount withStartIndex:i];
+        double d2 = [self cloudDistance:data withTrainingGesture:gesture withCount:gestureCount withStartIndex:i];
+        min = fmin(fmin(d1, d2), min);
+    }
+    return min;
 }
 
-- (float)gestureDistance: (NSMutableArray*)gesture1 withTrainingGesture:(NSMutableArray*)gesture2 {
-    NSUInteger len1 = [gesture1 count];
-    NSUInteger len2 = [gesture2 count];
-    NSMutableArray* matched = [[NSMutableArray alloc] initWithCapacity:len1];
-    
-    for (int i = 0; i < len1; i++ )
+- (double)cloudDistance: (NSMutableArray*)points withTrainingGesture:(NSMutableArray*)tmpl withCount:(NSUInteger)count withStartIndex: (int)start {
+    NSMutableArray* matched = [[NSMutableArray alloc] initWithCapacity:count];
+    for (int i = 0; i < count; i++ )
     {
         [matched addObject:[NSNumber numberWithBool:false]];
     }
+    double sum = 0;
     
-    int index = -1;
-    int start = 0; int i = 0;
+    int i = start;
+    int index = -1; //Invalid index
     
-    float sum = 0;
-    //do {
-    index = -1;
-    float min = +INFINITY;
-    for (int j = 0; j < len1; j++) {
-        if (![matched[j] boolValue]) {
-            //if (gesture1[i] == nil || gesture2[j] == nil) { continue; } //DAVE what's this?
-            if ( j >= len2 ) { break; }
-            
-            LeapPoint p1;
-            NSValue* value1 = [gesture1 objectAtIndex:i];
-            [value1 getValue:&p1];
-            
-            LeapPoint p2;
-            NSValue* value2 = [gesture2 objectAtIndex:j];
-            [value2 getValue:&p2];
-            
-            
-            double d = [self euclidianDistance:p1 withPoint:p2];
-            if (d < min) { min = d; index = j;}
+    do {
+        double min = +INFINITY;
+        for (int j = 0; j < count; j++) {
+            if (![matched[j] boolValue]) {
+                if ((j >= [tmpl count]) || i>=[points count]) { break; }
+                
+                LeapPoint p1 = [self getLeapPointFromObject:points[i]];
+                LeapPoint p2 = [self getLeapPointFromObject:tmpl[j]];
+                double d = [self euclidianDistance:p1 withPoint:p2];
+                if (d < min) {
+                    min = d;
+                    index = j;
+                }
+            }
         }
-    }
-    if (index != -1) {
-        matched[index] = [NSNumber numberWithBool:TRUE];
-    }
-    sum += (1 - ((i - start + len1) % len1) / len1) * min;
-    //i = (i + 1) % len1;
-    //} while (i != start);
+        
+        if (index != -1) {
+            matched[index] = [NSNumber numberWithBool:TRUE];
+        }
+        double weight = 1 - ((i - start + count) % count) / (double)count;
+        sum += weight * min;
+        i = (i + 1) % count;
+    } while (i != start);
     
     return sum;
 }

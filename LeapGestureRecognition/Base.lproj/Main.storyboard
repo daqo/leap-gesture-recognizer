@@ -800,6 +800,14 @@
                             <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="V6w-sH-9k3">
                                 <rect key="frame" x="22" y="64" width="403" height="299"/>
                             </customView>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qpf-HC-YIx">
+                                <rect key="frame" x="44" y="26" width="38" height="17"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="jL3-n7-Rnt">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                     </view>
                     <connections>
@@ -808,6 +816,7 @@
                         <outlet property="forwardGestureStatus" destination="VOS-Jf-kqa" id="j38-J0-0Fw"/>
                         <outlet property="frameView" destination="V6w-sH-9k3" id="rCa-JP-lYR"/>
                         <outlet property="gestureName" destination="pUs-Pm-G8a" id="uQk-tL-lkp"/>
+                        <outlet property="gestureType" destination="Qpf-HC-YIx" id="ITh-UP-0jV"/>
                         <outlet property="hoverGestureStatus" destination="0oF-yy-egi" id="Lop-bL-ENL"/>
                         <outlet property="isTrackingPaused" destination="5YU-9E-xk6" id="qrE-R6-T7O"/>
                         <outlet property="makeANewGestureButton" destination="H4E-Ui-B2f" id="h4O-m8-1K0"/>

@@ -12,13 +12,13 @@
 #import "UndistortedImageViewWithTips.h"
 #import "RawImageWithTips.h"
 
-#define MIN_RECORDING_VELOCITY 300
+#define MIN_RECORDING_VELOCITY 250
 #define MAX_RECORDING_VELOCITY 30
-#define MIN_GESTURE_FRAMES 10
+#define MIN_GESTURE_FRAMES 5
 #define MIN_POSE_FRAMES 75
-#define DOWNTIME 1
+#define DOWNTIME 2
 #define REQUIRED_TRAINING_GESTURE_COUNT 10
-#define HIT_THRESHOLD 0.80
+#define HIT_THRESHOLD 0.7
 
 
 @implementation ViewController
@@ -167,19 +167,26 @@
     self.gestureName.stringValue = @"";
 }
 
-unsigned long trainingGestureIsSaved(unsigned long currentNumber) {
+unsigned long numberOfTrainingsRequired(unsigned long currentNumber) {
     return REQUIRED_TRAINING_GESTURE_COUNT - currentNumber;
 }
 
 - (void) trainingGestureIsSaved: (NSNotification *)n {
     NSString *name = n.userInfo[@"gestureName"];
-    unsigned long count = trainingGestureIsSaved([n.userInfo[@"trainingGesture"] count]);
+    unsigned long count = numberOfTrainingsRequired([n.userInfo[@"trainingGesture"] count]);
     [self showTrainingGestureStatus:[[NSString alloc] initWithFormat:@"Perform %@ gesture or pose %ld times", name, count]];
 }
 
 - (void) GestureIsRecognized: (NSNotification *)n {
     NSString* name = n.userInfo[@"closestGestureName"];
-    NSLog(@"%@", name);
+    self.gestureType.stringValue = name;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [NSThread sleepForTimeInterval:1.0f];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            //Here you returns to main thread.
+            self.gestureType.stringValue = @"";
+        });
+    });
 }
 
 - (void) GestureIsUnknown: (NSNotification *)n {
@@ -207,7 +214,9 @@ unsigned long trainingGestureIsSaved(unsigned long currentNumber) {
         if (!_recording) {
             _recording = TRUE;
             _frameCount = 0;
-            _gesture = [NSMutableArray array];
+            @synchronized(self) {
+                _gesture = [NSMutableArray array];
+            }
             _recordedPoseFrames = 0;
             [[NSNotificationCenter defaultCenter] postNotificationName:@"started-recording" object:self];
         }
@@ -225,7 +234,11 @@ unsigned long trainingGestureIsSaved(unsigned long currentNumber) {
             if (_trainingGestureName) {
                 [self saveTrainingGesture:_trainingGestureName withGestureInfo:_gesture withIsPosed:_recordingPose];
             } else {
-                [self recognize:_gesture withFrameCount:_frameCount];
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                    @synchronized(self) {
+                        [self recognize:_gesture withFrameCount:_frameCount];
+                    }
+                });
             }
             _lastHit = [self currentTime];
             _recordingPose = FALSE;
@@ -315,24 +328,31 @@ unsigned long trainingGestureIsSaved(unsigned long currentNumber) {
     [_gestures setObject:newData forKey:gestureName];
 }
 
-- (void)recognize:(NSMutableArray*)gesture withFrameCount:(int)framecCount {
+- (void)recognize:(NSMutableArray*)gesture withFrameCount:(int)frameCount {
     NSMutableDictionary* gestures = _gestures;
-    float threshold = HIT_THRESHOLD;
+    double threshold = HIT_THRESHOLD;
     NSMutableDictionary* allHits = [NSMutableDictionary dictionary];
     
-    float hit = 0;
-    float bestHit = 0;
+    double hit = 0;
+    double bestHit = 0;
     BOOL recognized = FALSE;
     NSString* closestGestureName = nil;
-    BOOL recognizingPose = (framecCount == 1);
+    BOOL recognizingPose = (frameCount == 1); //Single-frame recordings are idenfied as poses
     
     for(NSString* gestureName in gestures) {
+        // We don't actually attempt to compare gestures to poses
         if([[_poses objectForKey:gestureName] boolValue] != recognizingPose) {
             hit = 0.0;
         } else {
+            /*
+             * For each know gesture we generate a correlation value between the parameter gesture and a saved
+             * set of training gestures. This correlation value is a numeric value between 0.0 and 1.0 describing how similar
+             * this gesture is to the training set.
+             */
             hit = [_learner correlate:gestureName withTrainingSet:[gestures objectForKey:gestureName] withCurrentGesture:gesture];
         }
-        [allHits setValue:[NSNumber numberWithFloat:hit] forKey:gestureName];
+        //Each hit is recorded
+        [allHits setValue:[NSNumber numberWithDouble:hit] forKey:gestureName];
         if (hit >= threshold) { recognized = TRUE; }
         if (hit > bestHit) { bestHit = hit; closestGestureName = gestureName; }
     }
@@ -373,7 +393,7 @@ unsigned long trainingGestureIsSaved(unsigned long currentNumber) {
 //        LeapImage *rightImage = [frame.images objectAtIndex:1];
 //        
 //        NSRect rightImageFrame = NSMakeRect(0,0, rightImage.width, rightImage.height);
-//        RawImageWithTips *rightImageView = [[RawImageWithTips alloc] initWithFrame:rightImageFrame controller:controller andImageID:rightImage.id];
+//        RawImageWithTips *rightImageView = [[RawImageWithTips alloc] initWithFrame:rightImageFrame controller:_leapController andImageID:rightImage.id];
 //        [self.frameView addSubview:rightImageView];
 //
 //    }
