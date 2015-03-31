@@ -8,65 +8,124 @@
 
 #import "ViewController.h"
 #import "LeapObjectiveC.h"
-#import "RawImageView.h"
 #import "GeometricTemplateMatcher.h"
+#import "UndistortedImageViewWithTips.h"
+#import "RawImageWithTips.h"
+
+#define MIN_RECORDING_VELOCITY 300
+#define MAX_RECORDING_VELOCITY 30
+#define MIN_GESTURE_FRAMES 10
+#define MIN_POSE_FRAMES 75
+#define DOWNTIME 1
+#define REQUIRED_TRAINING_GESTURE_COUNT 10
+#define HIT_THRESHOLD 0.80
+
 
 @implementation ViewController
 {
-    LeapController *controller;
+    LeapController *_leapController;
+    
     int _secondsLeftForTrainingToStart;
     NSTimer* _threeSecondsTimer;
     
-    
     BOOL _recording;
-    NSMutableArray* _gesture;
-    int _frameCount;
-    
-    
     BOOL _paused;
-    int _downtime;
+    BOOL _recordingPose;
+    
+    int _frameCount;
     time_t _lastHit;
-    
-    int _minRecordingVelocity;
-    int _maxRecordingVelocity;
-    
-    NSMutableArray* _renderableGesture;
     int _recordedPoseFrames;
     
-    BOOL _recordingPose;
-    int _minGestureFrames;
-    int _minPoseFrames;
-    
-    NSString* _trainingGesture;
+    NSString* _trainingGestureName;
+    NSMutableArray* _gesture;
     NSMutableDictionary* _gestures;
-    int _requiredTrainingGesturesCount;
-    
     NSMutableDictionary* _poses;
-    GeometricTemplateMatcher* _learner;
     
-    float _hitThreshold;
-}
-
-- (void)onInit:(NSNotification *)notification
-{
-    NSLog(@"Initialized");
+    GeometricTemplateMatcher* _learner;
 }
 
 - (void)onConnect:(NSNotification *)notification
 {
     NSLog(@"Connected");
-    LeapController *aController = (LeapController *)[notification object];
-    [aController setPolicy:LEAP_POLICY_IMAGES];
-    [aController.config save];
+    LeapController *_controller = (LeapController *)[notification object];
+    [_controller setPolicy:LEAP_POLICY_IMAGES];
+    [_controller.config save];
     
 }
 
-- (void)onDisconnect:(NSNotification *)notification
-{
-    NSLog(@"Disconnected");
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(recordingIsStarted:) name:@"started-recording" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(recordingIsStopped:) name:@"stopped-recording" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(gestureIsDetected:) name:@"gesture-detected" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(trainingIsStarted:) name:@"training-started" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(trainingIsCompleted:) name:@"training-complete" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(trainingGestureIsSaved:) name:@"training-gesture-saved" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(GestureIsRecognized:) name:@"gesture-recognized" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(GestureIsUnknown:) name:@"gesture-unknown" object:nil];
+    
+    _leapController = [[LeapController alloc] init];
+    [_leapController addListener:self];
+    [self pauseFrameTracking];
+    
+    _gesture = [NSMutableArray array];
+    _secondsLeftForTrainingToStart = 4;
+    _gestures = [NSMutableDictionary dictionary];
+    _poses = [NSMutableDictionary dictionary];
+    _learner = [[GeometricTemplateMatcher alloc] init];
 }
 
-//////
+- (void)setRepresentedObject:(id)representedObject {
+    [super setRepresentedObject:representedObject];
+    
+    // Update the view, if already loaded.
+}
+
+- (BOOL)isGestureNameNotValid:(NSString*)name {
+    return !([name isEqual: @"LEFT"] || [name isEqual: @"RIGHT"] || [name isEqual: @"UP"] || [name isEqual: @"DOWN"] || [name isEqual: @"FORWARD"] || [name isEqual: @"BACK"] || [name isEqual: @"HOVER"]);
+}
+
+- (IBAction)addGesture:(id)sender {
+    NSString* name = [self.gestureName.stringValue uppercaseString];
+    if (![name isEqual: @""])
+    {
+        if ([self isGestureNameNotValid:name]) {
+            self.gestureName.stringValue = @"";
+            return;
+        }
+        
+        _trainingGestureName = self.gestureName.stringValue;
+        [_gestures setObject:[NSMutableArray array] forKey:_trainingGestureName];
+        
+        [self pauseFrameTracking];
+        _threeSecondsTimer = [NSTimer scheduledTimerWithTimeInterval:1.0
+                                      target:self
+                                      selector:@selector(startTrainingTimer)
+                                      userInfo:nil
+                                      repeats:YES];
+        [self.makeANewGestureButton setEnabled:FALSE];
+        [self.gestureName setEnabled:FALSE];
+    }
+}
+
+- (void)showTrainingGestureStatus: (NSString* )text {
+    self.trainingGestureStatus.stringValue = text;
+    [self.trainingGestureStatus setHidden:FALSE];
+}
+
+- (void)startTrainingTimer {
+    _secondsLeftForTrainingToStart--;
+    self.trainingAlert.stringValue = [[NSString alloc] initWithFormat:@"Training will start in %d seconds!", _secondsLeftForTrainingToStart];
+    [self.trainingAlert setHidden:FALSE];
+    if ( _secondsLeftForTrainingToStart == 0 ) {
+        [self showTrainingGestureStatus: [[NSString alloc] initWithFormat:@"Perform %@ gesture or pose %d times", _trainingGestureName, REQUIRED_TRAINING_GESTURE_COUNT]];
+        [_threeSecondsTimer invalidate];
+        _secondsLeftForTrainingToStart = 4;
+        [self.trainingAlert setHidden:TRUE];
+        [self startTraining:self.gestureName.stringValue];
+    }
+}
 
 - (void) recordingIsStarted: (NSNotification *)n {
     
@@ -77,12 +136,6 @@
 }
 
 - (void) gestureIsDetected: (NSNotification *)n {
-    self.gestureRecognitionStatus.stringValue = [[NSString alloc] initWithFormat:@"Gesture is Recognized!"];
-    [self.gestureRecognitionStatus setHidden:FALSE];
-}
-
-- (void) gestureIsCreated: (NSNotification *)n {
-    
 }
 
 - (void) trainingIsStarted: (NSNotification *)n {
@@ -90,36 +143,38 @@
 }
 
 - (void) trainingIsCompleted: (NSNotification *)n {
-    [self.numberOfTrainingLeftForCurrentGesture setHidden:TRUE];
     [self.makeANewGestureButton setEnabled:TRUE];
     
-    NSString* name = n.userInfo[@"gestureName"];
-    if ([name  isEqual: @"left"]) {
+    NSString* name = [n.userInfo[@"gestureName"] uppercaseString];
+    if ([name  isEqual: @"LEFT"]) {
         self.yawLeftGestureStatus.stringValue = [[NSString alloc] initWithFormat:@"Left: Set"];
-    } else if ([name  isEqual: @"right"]) {
+    } else if ([name  isEqual: @"RIGHT"]) {
         self.yawRightGestureStatus.stringValue = [[NSString alloc] initWithFormat:@"Right: Set"];
-    } else if ([name  isEqual: @"up"]) {
+    } else if ([name  isEqual: @"UP"]) {
         self.upGestureStatus.stringValue = [[NSString alloc] initWithFormat:@"Up: Set"];
-    } else if ([name  isEqual: @"down"]) {
+    } else if ([name  isEqual: @"DOWN"]) {
         self.downGestureStatus.stringValue = [[NSString alloc] initWithFormat:@"Down: Set"];
-    } else if ([name  isEqual: @"forward"]) {
+    } else if ([name  isEqual: @"FORWARD"]) {
         self.forwardGestureStatus.stringValue = [[NSString alloc] initWithFormat:@"Forward: Set"];
-    } else if ([name  isEqual: @"back"]) {
+    } else if ([name  isEqual: @"BACK"]) {
         self.backGestureStatus.stringValue = [[NSString alloc] initWithFormat:@"Back: Set"];
-    } else if ([name  isEqual: @"hover"]) {
+    } else if ([name  isEqual: @"HOVER"]) {
         self.hoverGestureStatus.stringValue = [[NSString alloc] initWithFormat:@"Hover: Set"];
     }
     
-    //@{ @"gestureName": gestureName, @"trainingGesture": contents, @"isPose": @(isPose)};
+    self.trainingGestureStatus.stringValue = @"Learning completed";
+    [self.gestureName setEnabled:TRUE];
+    self.gestureName.stringValue = @"";
+}
 
+unsigned long trainingGestureIsSaved(unsigned long currentNumber) {
+    return REQUIRED_TRAINING_GESTURE_COUNT - currentNumber;
 }
 
 - (void) trainingGestureIsSaved: (NSNotification *)n {
-    NSString* name = n.userInfo[@"gestureName"];
-    unsigned long count = _requiredTrainingGesturesCount - [n.userInfo[@"trainingGesture"] count];
-    self.numberOfTrainingLeftForCurrentGesture.stringValue = [[NSString alloc] initWithFormat:@"Perform %@ gesture or pose %ld times", name, count];
-
-    [self.numberOfTrainingLeftForCurrentGesture setHidden:FALSE];
+    NSString *name = n.userInfo[@"gestureName"];
+    unsigned long count = trainingGestureIsSaved([n.userInfo[@"trainingGesture"] count]);
+    [self showTrainingGestureStatus:[[NSString alloc] initWithFormat:@"Perform %@ gesture or pose %ld times", name, count]];
 }
 
 - (void) GestureIsRecognized: (NSNotification *)n {
@@ -130,103 +185,10 @@
 - (void) GestureIsUnknown: (NSNotification *)n {
     
 }
-///////
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    
-    // Do any additional setup after loading the view.
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(recordingIsStarted:) name:@"started-recording" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(recordingIsStopped:) name:@"stopped-recording" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(gestureIsDetected:) name:@"gesture-detected" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(gestureIsCreated:) name:@"gesture-created" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(trainingIsStarted:) name:@"training-started" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(trainingIsCompleted:) name:@"training-complete" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(trainingGestureIsSaved:) name:@"training-gesture-saved" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(GestureIsRecognized:) name:@"gesture-recognized" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(GestureIsUnknown:) name:@"gesture-unknown" object:nil];
-    
-    controller = [[LeapController alloc] init];
-    [controller addListener:self];
-    
-    _recording = FALSE;
-    _gesture = [NSMutableArray array];
-    _frameCount = 0;
-    
-    _secondsLeftForTrainingToStart = 4;
-    [self pauseFrameTracking];
-    _downtime = 2;
-    _lastHit = 0;
-    
-    _minRecordingVelocity = 300;
-    _maxRecordingVelocity = 30;
-    
-    _renderableGesture = [NSMutableArray array];
-    _recordedPoseFrames = 0;
-    
-    _recordingPose = FALSE;
-    _minGestureFrames = 5;
-    _minPoseFrames = 75;
-    
-    _trainingGesture= Nil;
-    _gestures = [NSMutableDictionary dictionary];
-    _requiredTrainingGesturesCount = 10; //DAVE change this in the final implementation
-    
-    _poses = [NSMutableDictionary dictionary];
-    _learner = [[GeometricTemplateMatcher alloc] init];
-    
-    _hitThreshold = 0.80;
-}
-
-- (void)setRepresentedObject:(id)representedObject {
-    [super setRepresentedObject:representedObject];
-    
-    // Update the view, if already loaded.
-}
-
-- (IBAction)addGesture:(id)sender {
-    NSString* name = self.gestureName.stringValue;
-    if (![name isEqual: @""])
-    {
-        if (!([name isEqual: @"left"] || [name isEqual: @"right"] || [name isEqual: @"up"] || [name isEqual: @"down"] || [name isEqual: @"forward"] || [name isEqual: @"back"] || [name isEqual: @"hover"])) {
-            //the name is not valid
-            self.gestureName.stringValue = @"";
-            return;
-        }
-        
-        _trainingGesture = self.gestureName.stringValue;
-        [_gestures setObject:[NSMutableArray array] forKey:_trainingGesture];
-        
-        NSDictionary * userInfo = @{ @"trainingGesture" : _trainingGesture };
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"gesture-created" object:self userInfo:userInfo];
-        
-        [self pauseFrameTracking];
-        _threeSecondsTimer = [NSTimer scheduledTimerWithTimeInterval:1.0
-                               target:self
-                               selector:@selector(startTrainingTimer)
-                               userInfo:nil
-                               repeats:YES];
-        [self.makeANewGestureButton setEnabled:FALSE];
-    }
-}
-
-- (void)startTrainingTimer {
-    _secondsLeftForTrainingToStart--;
-    self.trainingAlert.stringValue = [[NSString alloc] initWithFormat:@"Training will start in %d seconds!", _secondsLeftForTrainingToStart];
-    [self.trainingAlert setHidden:FALSE];
-    if ( _secondsLeftForTrainingToStart == 0 ) {
-        ////
-        self.numberOfTrainingLeftForCurrentGesture.stringValue = [[NSString alloc] initWithFormat:@"Perform %@ gesture or pose %d times", _trainingGesture, _requiredTrainingGesturesCount];
-        [self.numberOfTrainingLeftForCurrentGesture setHidden:FALSE];
-        ////
-        [_threeSecondsTimer invalidate];
-        _secondsLeftForTrainingToStart = 4;
-        [self.trainingAlert setHidden:TRUE];
-        [self startTraining:self.gestureName.stringValue];
-        
-    }
-
+- (time_t)currentTime
+{
+    return (time_t) [[NSDate date] timeIntervalSince1970];
 }
 
 - (void)onFrame:(NSNotification *)notification
@@ -235,78 +197,69 @@
     LeapFrame *frame = [aController frame:0];
     
     self.testLabel.stringValue = [[NSString alloc] initWithFormat:@"%lld", [frame id]];
-    [self updateImageFromFrame:frame];
     
-    ///// LeapTrainer Code
-
     if (_paused) { return; }
     time_t now = (time_t) [[NSDate date] timeIntervalSince1970];
-    if (now - _lastHit < _downtime) { return; }
+    if (now - _lastHit < DOWNTIME) { return; }
     
     BOOL isRecordable = [self recordableFrame:frame];
     if (isRecordable) {
         if (!_recording) {
             _recording = TRUE;
             _frameCount = 0;
-            _gesture = [NSMutableArray array]; //DAVE what type should _gesture be?
-            _renderableGesture = [NSMutableArray array]; //DAVE what type should _renderableGesture be?
+            _gesture = [NSMutableArray array];
             _recordedPoseFrames = 0;
             [[NSNotificationCenter defaultCenter] postNotificationName:@"started-recording" object:self];
         }
-        
         _frameCount++;
-        [self recordFrame:frame withPreviousFrame:[aController frame:1]];
-        [self recordRenderableFrame:frame withPreviousFrame:[aController frame:1]];
+        [self recordFrame:frame];
     } else if (_recording) {
         _recording = FALSE;
         [[NSNotificationCenter defaultCenter] postNotificationName:@"stopped-recording" object:self];
         
-        if (_recordingPose || _frameCount >= _minGestureFrames) {
+        if (_recordingPose || _frameCount >= MIN_GESTURE_FRAMES) {
             
             NSDictionary * userInfo = @{ @"gesture": _gesture, @"frameCount" : @(_frameCount) };
             [[NSNotificationCenter defaultCenter] postNotificationName:@"gesture-detected" object:self userInfo:userInfo];
             
-            NSString *gestureName = _trainingGesture;
-            if (gestureName) {
-                [self saveTrainingGesture:gestureName withGestureInfo:_gesture withIsPosed:_recordingPose];
+            if (_trainingGestureName) {
+                [self saveTrainingGesture:_trainingGestureName withGestureInfo:_gesture withIsPosed:_recordingPose];
             } else {
-                [self recognize:_gesture withFrameCount:_frameCount]; //DAVE what's the criteria for this?
+                [self recognize:_gesture withFrameCount:_frameCount];
             }
-            _lastHit = (time_t) [[NSDate date] timeIntervalSince1970];
-            _recordingPose = FALSE; //DAVE when does _recordingPose become TRUE?
+            _lastHit = [self currentTime];
+            _recordingPose = FALSE;
         }
     }
 }
 
+- (double)findMaxObjectsVelocity:(LeapHand*)hand {
+    LeapVector* palmVelocity = hand.palmVelocity;
+    NSMutableArray* objectsVelocity = [NSMutableArray array];
+    double palmVelocityValue = fmax(fabs(palmVelocity.x), fmax(fabs(palmVelocity.y), fabs(palmVelocity.z)));
+    [objectsVelocity addObject:[NSNumber numberWithDouble:palmVelocityValue]];
+    for(LeapFinger* finger in hand.fingers) {
+        double tipVelocityValue = fmax(fabs(finger.tipVelocity.x), fmax(fabs(finger.tipVelocity.y), fabs(finger.tipVelocity.z)));
+        [objectsVelocity addObject:[NSNumber numberWithDouble:tipVelocityValue]];
+    }
+    
+    return [[objectsVelocity valueForKeyPath:@"@max.self"] doubleValue];
+}
+
 - (BOOL)recordableFrame:(LeapFrame*) frame {
-    NSArray *hands = [frame hands];
     BOOL poseRecordable = FALSE;
 
-    for(int i = 0; i < [hands count]; i++) {
-        LeapHand *hand = hands[i];
-        LeapVector* palmVelocity = hand.palmVelocity;
-        float palmVelocityValue = fmax(fabs(palmVelocity.x), fmax(fabs(palmVelocity.y), fabs(palmVelocity.z)));
-        /*
-         * We return true if there is a hand moving above the minimum recording velocity
-         */
-        if (palmVelocityValue >= _minRecordingVelocity) { return true; }
-        if (palmVelocityValue <= _maxRecordingVelocity) { poseRecordable = TRUE; break; }
-        NSArray *fingers = [hand fingers];
-        for (int j = 0; j < [fingers count]; j++) {
-            LeapFinger *finger = fingers[j];
-            LeapVector* tipVelocity = finger.tipVelocity;
-            float tipVelocityValue = fmax(fabs(tipVelocity.x), fmax(fabs(tipVelocity.y), fabs(tipVelocity.z)));
-            /*
-             * Or if there's a finger tip moving above the minimum recording velocity
-             */
-            if (tipVelocityValue >= _minRecordingVelocity) { return true; }
-            if (tipVelocityValue <= _maxRecordingVelocity) { poseRecordable = TRUE; break; }
-        }
+    for(LeapHand* hand in frame.hands) {
+        double maxObjectVelocityValue = [self findMaxObjectsVelocity:hand];
+        
+        // We return true if there is a hand moving above the minimum recording velocity
+        if (maxObjectVelocityValue >= MIN_RECORDING_VELOCITY) { return true; }
+        if (maxObjectVelocityValue <= MAX_RECORDING_VELOCITY) { poseRecordable = TRUE; break; }
     }
     
     if (poseRecordable) {
         _recordedPoseFrames++;
-        if (_recordedPoseFrames >= _minPoseFrames) {
+        if (_recordedPoseFrames >= MIN_POSE_FRAMES) {
             _recordingPose = TRUE;
             return TRUE;
         }
@@ -316,16 +269,10 @@
     return FALSE; //DAVE: check this line
 }
 
-- (void)recordFrame:(LeapFrame*)frame withPreviousFrame:(LeapFrame*)prevFrame {
-    NSArray *hands = frame.hands;
-    
-    for (int i = 0; i < [hands count]; i++) {
-        LeapHand* hand = hands[i];
+- (void)recordFrame:(LeapFrame*)frame {
+    for(LeapHand* hand in frame.hands) {
         [self recordVector:hand.stabilizedPalmPosition];
-        NSArray* fingers = hand.fingers;
-        
-        for (int j = 0; j < [fingers count];  j++) {
-            LeapFinger* finger = fingers[j];
+        for(LeapFinger* finger in hand.fingers) {
             [self recordVector:finger.stabilizedTipPosition];
         };
     };
@@ -333,49 +280,44 @@
 
 - (void)startTraining:(NSString*)gestureName {
     [self resumeFrameTracking];
-     NSDictionary * userInfo = @{ @"gestureName": gestureName};
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"training-started" object:self userInfo:userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"training-started" object:self userInfo:@{ @"gestureName": gestureName}];
 }
 
-- (void)recordRenderableFrame:(LeapFrame*)frame withPreviousFrame:(LeapFrame*)prevFrame {
-//    NSLog(@"recordRenderableFrame needs to be implemented.");
-}
 
-- (void)saveTrainingGesture:(NSString*)gestureName withGestureInfo:(NSMutableArray*)gesture withIsPosed:(BOOL)isPose {
-    NSMutableArray* contents = [_gestures objectForKey:gestureName];
-    [contents addObject:gesture];
-    if ([contents count] == _requiredTrainingGesturesCount) {
-        [_gestures setObject:contents forKey:gestureName]; //DAVE use distribute method here!!
+- (void)saveTrainingGesture:(NSString*)gestureName withGestureInfo:(NSMutableArray*)data withIsPosed:(BOOL)isPose {
+    NSMutableArray* dataAssociatedToCurrentGesture = [_gestures objectForKey:gestureName];
+    [dataAssociatedToCurrentGesture addObject:data];
+    if ([dataAssociatedToCurrentGesture count] == REQUIRED_TRAINING_GESTURE_COUNT) {
+        [_gestures setObject:dataAssociatedToCurrentGesture forKey:gestureName]; //DAVE use distribute method here!!
         [_poses setObject:[NSNumber numberWithBool:isPose] forKey:gestureName];
-        _trainingGesture = nil;
-        [self trainAlgorithm:gestureName withTrainingData:contents];
+        [self trainAlgorithm:gestureName withTrainingData:dataAssociatedToCurrentGesture];
+        _trainingGestureName = nil;
         
-        NSDictionary * userInfo = @{ @"gestureName": gestureName, @"trainingGesture": contents, @"isPose": @(isPose)};
+        NSDictionary * userInfo = @{ @"gestureName": gestureName, @"trainingGesture": dataAssociatedToCurrentGesture, @"isPose": @(isPose)};
         [[NSNotificationCenter defaultCenter] postNotificationName:@"training-complete" object:self userInfo:userInfo];
     } else {
-        NSDictionary * userInfo = @{ @"gestureName": gestureName, @"trainingGesture": contents };
+        NSDictionary * userInfo = @{ @"gestureName": gestureName, @"trainingGesture": dataAssociatedToCurrentGesture };
         [[NSNotificationCenter defaultCenter] postNotificationName:@"training-gesture-saved" object:self userInfo:userInfo];
     }
 }
 
-- (void)trainAlgorithm:(NSString*)gestureName withTrainingData:(NSMutableArray*)data {
+- (void)trainAlgorithm:(NSString*)gestureName withTrainingData:(NSMutableArray*)dataForGestureName {
     /* 
-     data is the set of data gathered during training.
-     for example if we have _requiredTrainingGesturesCount set to 4, data will comprise 4 arrays.
-     each subarray has different points gathered during each motion.
-     in each frame we are recording 6 points (each point ha x y z). so each subarray's length will be a multiplication of 6*3.
+     dataForGestureName is the set of data gathered during training.
+     for example if we have REQUIRED_TRAINING_GESTURE_COUNT set to 4, dataForGestureName will comprise 4 arrays.
+     each subarray includes different points gathered during each motion.
+     in each frame we are recording 6 points (each point has x y z). so each subarray's length will be a multiplication of 6*3.
     */
     NSMutableArray* newData = [NSMutableArray array];
-    for (int i = 0; i < [data count]; i++) {
-        newData[i] = [_learner process:data[i]];
+    for (int i = 0; i < [dataForGestureName count]; i++) {
+        newData[i] = [_learner process:dataForGestureName[i]]; //each dataForGestureName[i] element is an Array of floats
     }
     [_gestures setObject:newData forKey:gestureName];
-    
 }
 
 - (void)recognize:(NSMutableArray*)gesture withFrameCount:(int)framecCount {
     NSMutableDictionary* gestures = _gestures;
-    float threshold = _hitThreshold;
+    float threshold = HIT_THRESHOLD;
     NSMutableDictionary* allHits = [NSMutableDictionary dictionary];
     
     float hit = 0;
@@ -424,36 +366,41 @@
     _paused = TRUE;
     self.isTrackingPaused.stringValue = [[NSString alloc] initWithFormat:@"Tracking: Paused"];
 }
+- (IBAction)updateImage:(id)sender {
+    LeapFrame *frame = [_leapController frame:0];
     
-/////////
-- (void)updateImageFromFrame:(LeapFrame *)frame
-{
+//    if (frame.images.count > 0) {
+//        LeapImage *rightImage = [frame.images objectAtIndex:1];
+//        
+//        NSRect rightImageFrame = NSMakeRect(0,0, rightImage.width, rightImage.height);
+//        RawImageWithTips *rightImageView = [[RawImageWithTips alloc] initWithFrame:rightImageFrame controller:controller andImageID:rightImage.id];
+//        [self.frameView addSubview:rightImageView];
+//
+//    }
+    
     if (frame.images.count > 0) {
-        LeapImage *image = [frame.images objectAtIndex:0];
+        LeapImage *leftImage = [frame.images objectAtIndex:0];
         
-        NSBitmapImageRep *imgRep = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL
-                                                             pixelsWide:image.width
-                                                             pixelsHigh:image.height
-                                                             bitsPerSample:8
-                                                             samplesPerPixel:1
-                                                             hasAlpha:NO
-                                                             isPlanar:NO
-                                                             colorSpaceName:NSCalibratedWhiteColorSpace
-                                                             bitmapFormat:0
-                                                             bytesPerRow:image.width
-                                                             bitsPerPixel:8];
+        NSOpenGLPixelFormatAttribute attrs[] =
+        {
+            NSOpenGLPFADoubleBuffer,
+            NSOpenGLPFADepthSize, 24,
+            NSOpenGLPFAOpenGLProfile, NSOpenGLProfileVersion3_2Core,
+            0
+        };
         
-        NSImage *nsimage = [[NSImage alloc] initWithSize:NSMakeSize(image.width, image.height)];
+        NSOpenGLPixelFormat* pixFmt = [[NSOpenGLPixelFormat alloc] initWithAttributes:attrs];
+        if (pixFmt == nil) {
+            NSLog(@"Pixel format creation failed.");
+        }
         
-        unsigned char * bmpData = [imgRep bitmapData];
-        memcpy(bmpData, image.data, image.width * image.height);
+        NSSize frameViewSize = self.frameView.frame.size;
         
-        [nsimage addRepresentation:imgRep];
-        
-        [self.lImageView setImage:nsimage];
-
+        NSRect leftImageFrame = NSMakeRect(0,0,frameViewSize.width, frameViewSize.height);
+        UndistortedImageViewWithTips *leftUnwarpWithShaderView = [[UndistortedImageViewWithTips alloc] initWithFrame:leftImageFrame pixelFormat:pixFmt andController:_leapController andImageID:leftImage.id];
+        [self.frameView addSubview:leftUnwarpWithShaderView];
+        [self.frameView setAutoresizesSubviews:YES];
     }
-    
-}
 
+}
 @end

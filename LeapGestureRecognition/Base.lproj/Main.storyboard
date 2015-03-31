@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="6751" systemVersion="14C1514" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
+        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6751"/>
     </dependencies>
     <scenes>
@@ -688,10 +689,6 @@
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HZ3-aH-F2z">
-                                <rect key="frame" x="48" y="57" width="375" height="317"/>
-                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" imageFrameStyle="grayBezel" id="lCS-fE-PtO"/>
-                            </imageView>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="H4E-Ui-B2f">
                                 <rect key="frame" x="592" y="382" width="61" height="32"/>
                                 <buttonCell key="cell" type="push" title="Set" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="gqY-hR-D3L">
@@ -774,22 +771,6 @@
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ifE-l9-nW6">
-                                <rect key="frame" x="49" y="20" width="200" height="17"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="tPj-DQ-PdI">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" red="0.60000002384185791" green="0.40000000596046448" blue="0.20000000298023224" alpha="1" colorSpace="calibratedRGB"/>
-                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5YU-9E-xk6">
-                                <rect key="frame" x="281" y="20" width="141" height="17"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="WOb-RO-oQY">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
                             <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UX7-HA-nIH">
                                 <rect key="frame" x="101" y="388" width="338" height="17"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" enabled="NO" sendsActionOnEndEditing="YES" alignment="center" title="Number of training left" id="nY6-XZ-KPH">
@@ -798,21 +779,41 @@
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CCx-7e-qx6">
+                                <rect key="frame" x="489" y="19" width="117" height="32"/>
+                                <buttonCell key="cell" type="push" title="Show Image" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="WEN-bD-tkA">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="updateImage:" target="XfG-lQ-9wD" id="chV-84-jXh"/>
+                                </connections>
+                            </button>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5YU-9E-xk6">
+                                <rect key="frame" x="428" y="418" width="141" height="17"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="WOb-RO-oQY">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="V6w-sH-9k3">
+                                <rect key="frame" x="22" y="64" width="403" height="299"/>
+                            </customView>
                         </subviews>
                     </view>
                     <connections>
                         <outlet property="backGestureStatus" destination="f8N-Xk-B3n" id="Vzo-67-Pq7"/>
                         <outlet property="downGestureStatus" destination="bva-eS-cdX" id="5I2-WN-z5d"/>
                         <outlet property="forwardGestureStatus" destination="VOS-Jf-kqa" id="j38-J0-0Fw"/>
+                        <outlet property="frameView" destination="V6w-sH-9k3" id="rCa-JP-lYR"/>
                         <outlet property="gestureName" destination="pUs-Pm-G8a" id="uQk-tL-lkp"/>
-                        <outlet property="gestureRecognitionStatus" destination="ifE-l9-nW6" id="DWx-ax-sF9"/>
                         <outlet property="hoverGestureStatus" destination="0oF-yy-egi" id="Lop-bL-ENL"/>
                         <outlet property="isTrackingPaused" destination="5YU-9E-xk6" id="qrE-R6-T7O"/>
-                        <outlet property="lImageView" destination="HZ3-aH-F2z" id="me1-BR-pE2"/>
                         <outlet property="makeANewGestureButton" destination="H4E-Ui-B2f" id="h4O-m8-1K0"/>
-                        <outlet property="numberOfTrainingLeftForCurrentGesture" destination="UX7-HA-nIH" id="8Ep-op-09t"/>
                         <outlet property="testLabel" destination="Ak0-Nq-EB0" id="DbX-Yj-2Vm"/>
                         <outlet property="trainingAlert" destination="OzC-ig-RSK" id="0ee-ra-pGk"/>
+                        <outlet property="trainingGestureStatus" destination="UX7-HA-nIH" id="vs6-cw-b7i"/>
                         <outlet property="upGestureStatus" destination="Tbx-S3-nU7" id="IPS-ma-G5V"/>
                         <outlet property="yawLeftGestureStatus" destination="4Dc-E3-byt" id="wCh-Ev-52H"/>
                         <outlet property="yawRightGestureStatus" destination="Tax-Fg-Ia9" id="Ux6-F7-I5u"/>
@@ -821,18 +822,6 @@
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="164.5" y="745"/>
-        </scene>
-        <!--Collection View Item-->
-        <scene sceneID="Vem-NP-5OM">
-            <objects>
-                <collectionViewItem id="rmP-pz-XWD" sceneMemberID="viewController">
-                    <view key="view" id="yEK-N6-rZT">
-                        <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </view>
-                </collectionViewItem>
-                <customObject id="pNB-g1-VYm" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-            </objects>
         </scene>
     </scenes>
 </document>

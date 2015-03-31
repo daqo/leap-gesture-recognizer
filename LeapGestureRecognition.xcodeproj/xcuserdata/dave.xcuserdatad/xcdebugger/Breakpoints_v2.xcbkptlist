@@ -20,28 +20,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "LeapGestureRecognition/GeometricTemplateMatcher.m"
-            timestampString = "449259696.109668"
+            timestampString = "449472184.288208"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "210"
-            endingLineNumber = "210"
+            startingLineNumber = "209"
+            endingLineNumber = "209"
             landmarkName = "-correlate:withTrainingSet:withCurrentGesture:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "LeapGestureRecognition/ViewController.m"
-            timestampString = "449419632.866494"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "369"
-            endingLineNumber = "369"
-            landmarkName = "-trainAlgorithm:withTrainingData:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
