@@ -12,14 +12,11 @@ struct LeapPoint
     float z;
     int stroke;
 };
+typedef struct LeapPoint LeapPoint;
 
-@interface GeometricTemplateMatcher : NSObject  {
-    int _pointCount;
-    struct LeapPoint _origin;
-}
+@interface GeometricTemplateMatcher : NSObject
 
 - (NSMutableArray*)process: (NSMutableArray* )gesture;
 - (float)correlate:(NSString*)gestureName withTrainingSet:(NSMutableArray*)trainingGestures withCurrentGesture:(NSMutableArray*)gesture;
-
 
 @end
