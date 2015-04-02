@@ -16,9 +16,9 @@
 #define MAX_RECORDING_VELOCITY 30
 #define MIN_GESTURE_FRAMES 5
 #define MIN_POSE_FRAMES 75
-#define DOWNTIME 2
+#define DOWNTIME 1
 #define REQUIRED_TRAINING_GESTURE_COUNT 8
-#define HIT_THRESHOLD 0.7
+#define HIT_THRESHOLD 0.65
 
 
 @implementation ViewController
@@ -179,7 +179,7 @@ unsigned long numberOfTrainingsRequired(unsigned long currentNumber) {
 
 - (void) GestureIsRecognized: (NSNotification *)n {
     NSString* name = n.userInfo[@"closestGestureName"];
-    self.gestureType.stringValue = name;
+    self.gestureType.stringValue = [name uppercaseString];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [NSThread sleepForTimeInterval:1.0f];
         dispatch_async(dispatch_get_main_queue(), ^{
