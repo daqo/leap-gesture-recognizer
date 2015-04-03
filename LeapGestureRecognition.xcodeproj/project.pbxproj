@@ -13,9 +13,7 @@
 		554328331AC080D6004D1681 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 554328321AC080D6004D1681 /* Images.xcassets */; };
 		554328361AC080D6004D1681 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 554328341AC080D6004D1681 /* Main.storyboard */; };
 		554328421AC080D6004D1681 /* LeapGestureRecognitionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 554328411AC080D6004D1681 /* LeapGestureRecognitionTests.m */; };
-		554328501AC081F9004D1681 /* libLeap.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5543284F1AC081F9004D1681 /* libLeap.dylib */; };
 		554328531AC082BF004D1681 /* LeapObjectiveC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 554328521AC082BF004D1681 /* LeapObjectiveC.mm */; };
-		554328571AC08326004D1681 /* libLeap.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5543284F1AC081F9004D1681 /* libLeap.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		5543285D1AC0A000004D1681 /* RawImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5543285C1AC0A000004D1681 /* RawImageView.m */; };
 		5543286B1AC48BEA004D1681 /* GeometricTemplateMatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 5543286A1AC48BEA004D1681 /* GeometricTemplateMatcher.m */; };
 		554328701AC9C75B004D1681 /* RawImageWithTips.m in Sources */ = {isa = PBXBuildFile; fileRef = 5543286F1AC9C75B004D1681 /* RawImageWithTips.m */; };
@@ -23,11 +21,13 @@
 		554328781AC9D132004D1681 /* OpenGLUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 554328771AC9D132004D1681 /* OpenGLUtil.m */; };
 		5543287F1AC9DB83004D1681 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 554328791AC9D18C004D1681 /* OpenGL.framework */; };
 		554328801AC9DB88004D1681 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5543287B1AC9D199004D1681 /* Quartz.framework */; };
-		554328861AC9E327004D1681 /* vertexImage.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 554328811AC9E327004D1681 /* vertexImage.vsh */; };
-		554328871AC9E327004D1681 /* fragmentImage.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 554328821AC9E327004D1681 /* fragmentImage.fsh */; };
-		554328881AC9E327004D1681 /* vertexTips.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 554328831AC9E327004D1681 /* vertexTips.vsh */; };
-		554328891AC9E327004D1681 /* geometryTips.gsh in Resources */ = {isa = PBXBuildFile; fileRef = 554328841AC9E327004D1681 /* geometryTips.gsh */; };
-		5543288A1AC9E327004D1681 /* fragmentTips.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 554328851AC9E327004D1681 /* fragmentTips.fsh */; };
+		5585F1971ACEE5F100F2B1FD /* fragmentImage.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 5585F1921ACEE5F100F2B1FD /* fragmentImage.fsh */; };
+		5585F1981ACEE5F100F2B1FD /* fragmentTips.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 5585F1931ACEE5F100F2B1FD /* fragmentTips.fsh */; };
+		5585F1991ACEE5F100F2B1FD /* geometryTips.gsh in Resources */ = {isa = PBXBuildFile; fileRef = 5585F1941ACEE5F100F2B1FD /* geometryTips.gsh */; };
+		5585F19A1ACEE5F100F2B1FD /* vertexImage.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 5585F1951ACEE5F100F2B1FD /* vertexImage.vsh */; };
+		5585F19B1ACEE5F100F2B1FD /* vertexTips.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 5585F1961ACEE5F100F2B1FD /* vertexTips.vsh */; };
+		5585F1A31ACEE7A000F2B1FD /* libLeap.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5585F1A21ACEE7A000F2B1FD /* libLeap.dylib */; };
+		5585F1A41ACEE83C00F2B1FD /* libLeap.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5585F1A21ACEE7A000F2B1FD /* libLeap.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,7 +47,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
-				554328571AC08326004D1681 /* libLeap.dylib in CopyFiles */,
+				5585F1A41ACEE83C00F2B1FD /* libLeap.dylib in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -66,7 +66,6 @@
 		5543283B1AC080D6004D1681 /* LeapGestureRecognitionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LeapGestureRecognitionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		554328401AC080D6004D1681 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		554328411AC080D6004D1681 /* LeapGestureRecognitionTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LeapGestureRecognitionTests.m; sourceTree = "<group>"; };
-		5543284F1AC081F9004D1681 /* libLeap.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libLeap.dylib; path = ../../lib/libLeap.dylib; sourceTree = "<group>"; };
 		554328511AC082BF004D1681 /* LeapObjectiveC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LeapObjectiveC.h; sourceTree = "<group>"; };
 		554328521AC082BF004D1681 /* LeapObjectiveC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LeapObjectiveC.mm; sourceTree = "<group>"; };
 		554328541AC082D6004D1681 /* Leap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Leap.h; sourceTree = "<group>"; };
@@ -84,11 +83,12 @@
 		554328791AC9D18C004D1681 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		5543287B1AC9D199004D1681 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
 		5543287D1AC9D1A7004D1681 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
-		554328811AC9E327004D1681 /* vertexImage.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = vertexImage.vsh; path = ../../ImageAPIinObjectiveC/src/vertexImage.vsh; sourceTree = "<group>"; };
-		554328821AC9E327004D1681 /* fragmentImage.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = fragmentImage.fsh; path = ../../ImageAPIinObjectiveC/src/fragmentImage.fsh; sourceTree = "<group>"; };
-		554328831AC9E327004D1681 /* vertexTips.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = vertexTips.vsh; path = ../../ImageAPIinObjectiveC/src/vertexTips.vsh; sourceTree = "<group>"; };
-		554328841AC9E327004D1681 /* geometryTips.gsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = geometryTips.gsh; path = ../../ImageAPIinObjectiveC/src/geometryTips.gsh; sourceTree = "<group>"; };
-		554328851AC9E327004D1681 /* fragmentTips.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; name = fragmentTips.fsh; path = ../../ImageAPIinObjectiveC/src/fragmentTips.fsh; sourceTree = "<group>"; };
+		5585F1921ACEE5F100F2B1FD /* fragmentImage.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = fragmentImage.fsh; sourceTree = "<group>"; };
+		5585F1931ACEE5F100F2B1FD /* fragmentTips.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = fragmentTips.fsh; sourceTree = "<group>"; };
+		5585F1941ACEE5F100F2B1FD /* geometryTips.gsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = geometryTips.gsh; sourceTree = "<group>"; };
+		5585F1951ACEE5F100F2B1FD /* vertexImage.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = vertexImage.vsh; sourceTree = "<group>"; };
+		5585F1961ACEE5F100F2B1FD /* vertexTips.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = vertexTips.vsh; sourceTree = "<group>"; };
+		5585F1A21ACEE7A000F2B1FD /* libLeap.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libLeap.dylib; path = ../../../../../../Leap/LeapSDK/lib/libLeap.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,9 +96,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5585F1A31ACEE7A000F2B1FD /* libLeap.dylib in Frameworks */,
 				554328801AC9DB88004D1681 /* Quartz.framework in Frameworks */,
 				5543287F1AC9DB83004D1681 /* OpenGL.framework in Frameworks */,
-				554328501AC081F9004D1681 /* libLeap.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -115,10 +115,10 @@
 		5543281C1AC080D6004D1681 = {
 			isa = PBXGroup;
 			children = (
+				5585F1A21ACEE7A000F2B1FD /* libLeap.dylib */,
 				5543287D1AC9D1A7004D1681 /* Cocoa.framework */,
 				5543287B1AC9D199004D1681 /* Quartz.framework */,
 				554328791AC9D18C004D1681 /* OpenGL.framework */,
-				5543284F1AC081F9004D1681 /* libLeap.dylib */,
 				554328271AC080D6004D1681 /* LeapGestureRecognition */,
 				5543283E1AC080D6004D1681 /* LeapGestureRecognitionTests */,
 				554328261AC080D6004D1681 /* Products */,
@@ -214,13 +214,13 @@
 		5543288B1AC9E344004D1681 /* OpenGLData */ = {
 			isa = PBXGroup;
 			children = (
+				5585F1921ACEE5F100F2B1FD /* fragmentImage.fsh */,
+				5585F1931ACEE5F100F2B1FD /* fragmentTips.fsh */,
+				5585F1941ACEE5F100F2B1FD /* geometryTips.gsh */,
+				5585F1951ACEE5F100F2B1FD /* vertexImage.vsh */,
+				5585F1961ACEE5F100F2B1FD /* vertexTips.vsh */,
 				554328761AC9D132004D1681 /* OpenGLUtil.h */,
 				554328771AC9D132004D1681 /* OpenGLUtil.m */,
-				554328811AC9E327004D1681 /* vertexImage.vsh */,
-				554328821AC9E327004D1681 /* fragmentImage.fsh */,
-				554328831AC9E327004D1681 /* vertexTips.vsh */,
-				554328841AC9E327004D1681 /* geometryTips.gsh */,
-				554328851AC9E327004D1681 /* fragmentTips.fsh */,
 			);
 			name = OpenGLData;
 			sourceTree = "<group>";
@@ -306,13 +306,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				554328881AC9E327004D1681 /* vertexTips.vsh in Resources */,
-				554328861AC9E327004D1681 /* vertexImage.vsh in Resources */,
-				554328891AC9E327004D1681 /* geometryTips.gsh in Resources */,
+				5585F1991ACEE5F100F2B1FD /* geometryTips.gsh in Resources */,
 				554328331AC080D6004D1681 /* Images.xcassets in Resources */,
-				5543288A1AC9E327004D1681 /* fragmentTips.fsh in Resources */,
 				554328361AC080D6004D1681 /* Main.storyboard in Resources */,
-				554328871AC9E327004D1681 /* fragmentImage.fsh in Resources */,
+				5585F19A1ACEE5F100F2B1FD /* vertexImage.vsh in Resources */,
+				5585F1971ACEE5F100F2B1FD /* fragmentImage.fsh in Resources */,
+				5585F1981ACEE5F100F2B1FD /* fragmentTips.fsh in Resources */,
+				5585F19B1ACEE5F100F2B1FD /* vertexTips.vsh in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -458,6 +458,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/dave/Downloads/Leap/LeapSDK/lib,
+					"$(PROJECT_DIR)",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -474,6 +475,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/Users/dave/Downloads/Leap/LeapSDK/lib,
+					"$(PROJECT_DIR)",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
